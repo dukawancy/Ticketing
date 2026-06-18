@@ -1,0 +1,28 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-console": "warn",
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"]
+  },
+  "globals": {
+    "firebase": "readonly",
+    "Utils": "writable",
+    "AuthService": "writable",
+    "TicketService": "writable",
+    "NotificationService": "writable",
+    "DataService": "writable",
+    "UI": "writable",
+    "DEMO_MODE": "writable"
+  }
+}

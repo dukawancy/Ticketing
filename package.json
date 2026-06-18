@@ -1,0 +1,31 @@
+{
+  "name": "ict-helpdesk-system",
+  "version": "3.0.0",
+  "description": "IT Helpdesk Ticketing System for UNIVERSITY OF JOS",
+  "main": "index.html",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint js/**/*.js",
+    "start": "npx serve ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/university/ict-helpdesk.git"
+  },
+  "keywords": [
+    "helpdesk",
+    "ticketing",
+    "support",
+    "ict"
+  ],
+  "author": "UNIJOS ICT Directorate",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.40.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "serve": "^14.2.0"
+  }
+}

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UNIJOS ICT Helpdesk | Support System</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/main.css">
+    <!-- Firebase (Optional/Ready) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <!-- AUTHENTICATION WRAPPER -->
+    <div id="auth-wrapper">
+        <!-- LOGIN -->
+        <div id="login-view" class="auth-page active">
+            <div class="auth-card">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon">🛟</div>
+                    <div class="auth-logo-text">
+                        <h1>UNIJOS ICT</h1>
+                        <p>Support Ticketing System</p>
+                    </div>
+                </div>
+                <h2 class="auth-title">Welcome Back</h2>
+                <p class="auth-subtitle">Sign in to manage your tickets.</p>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">University Email</label>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="e.g. name@unijos.edu.ng" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="loginPass" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full" style="justify-content:center; padding:0.75rem;">Login to Helpdesk</button>
+                </form>
+
+                <div class="auth-divider"><span>OR</span></div>
+                <div class="auth-footer">
+                    New user? <a onclick="UI.showAuthPage('register-view')">Create an account</a>.
+                </div>
+                
+                <!-- Demo Login Notice -->
+                <div style="margin-top:2rem; padding:1rem; background:var(--surface2); border-radius:var(--radius-sm); font-size:0.75rem; color:var(--muted)">
+                    <strong>Demo Logins:</strong><br/>
+                    Student: amina@unijos.edu.ng | pass123<br/>
+                    Tech: musa@unijos.edu.ng | ICT@2026<br/>
+                    Admin: admin@unijos.edu.ng | admin123
+                </div>
+            </div>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="register-view" class="auth-page">
+            <div class="auth-card">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon">📝</div>
+                    <div class="auth-logo-text">
+                        <h1>UNIJOS ICT</h1>
+                        <p>Account Registration</p>
+                    </div>
+                </div>
+                <h2 class="auth-title">Create Account</h2>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="regName" class="form-control" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Matric/Staff ID</label>
+                            <input type="text" id="regUid" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Role</label>
+                            <select id="regRole" class="form-control" required>
+                                <option value="student">Student</option>
+                                <option value="staff">Staff/Lecturer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">University Email (@unijos.edu.ng)</label>
+                        <input type="email" id="regEmail" class="form-control" required>
+                    </div>
+                    <div class="form-row mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="regPass" class="form-control" minlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Pass</label>
+                            <input type="password" id="regPass2" class="form-control" minlength="6" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full" style="justify-content:center; padding:0.75rem;">Register Account</button>
+                </form>
+
+                <div class="auth-footer mt-2">
+                    Already have an account? <a onclick="UI.showAuthPage('login-view')">Login here</a>.
+                </div>
+            </div>
+        </div>
+
+        <!-- PENDING APPROVAL -->
+        <div id="pending-view" class="auth-page">
+            <div class="auth-card pending-screen">
+                <div class="pending-icon">⏳</div>
+                <h2 class="auth-title">Account Pending</h2>
+                <p class="auth-subtitle" style="margin-bottom:1rem;">Your account registration was successful but is awaiting ICT Admin approval.</p>
+                <p class="text-sm text-muted mb-2">You will be notified once your account is activated.</p>
+                <button class="btn btn-ghost" onclick="UI.showAuthPage('login-view')">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MAIN APPLICATION WRAPPER -->
+    <div id="app-wrapper" class="app-wrapper" style="display:none;">
+        
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-brand">
+                <div class="topbar-logo">🛟</div>
+                <div>
+                    <div class="topbar-title">UNIJOS ICT</div>
+                    <div class="topbar-subtitle">Support System</div>
+                </div>
+            </div>
+
+            <!-- DESKTOP NAV -->
+            <nav class="topbar-nav">
+                <button class="nav-tab active" data-target="dashboard-page" data-roles="student,staff,technician,unit-head,admin,super-admin">Dashboard</button>
+                <button class="nav-tab" data-target="mytickets-page" data-roles="student,staff,technician">My Tickets</button>
+                <button class="nav-tab" data-target="alltickets-page" data-roles="unit-head,admin,super-admin">All Tickets</button>
+                <button class="nav-tab" data-target="newticket-page" data-roles="student,staff,technician">New Ticket</button>
+                <button class="nav-tab" data-target="users-page" data-roles="admin,super-admin">Manage Users</button>
+            </nav>
+
+            <div class="topbar-right">
+                <button id="notifBtn" class="notif-btn">
+                    🔔
+                    <span id="notifBadge" class="notif-badge hidden">0</span>
+                </button>
+                <div class="user-chip">
+                    <div class="user-avatar" id="topUserAvatar" style="background:var(--accent2)">A</div>
+                    <div class="user-info">
+                        <div class="user-name" id="topUserName">User Name</div>
+                        <div class="user-role-badge" id="topUserRole">Role</div>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- 1. DASHBOARD PAGE -->
+            <div id="dashboard-page" class="page active">
+                <div class="page-header">
+                    <h1 id="dashTitle">Dashboard</h1>
+                    <p>Overview of your ticket statistics.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card open">
+                        <div class="stat-icon">📥</div>
+                        <div class="stat-value" id="dashOpenCount">0</div>
+                        <div class="stat-label">Tickets Open</div>
+                    </div>
+                    <div class="stat-card in-progress">
+                        <div class="stat-icon">⚙️</div>
+                        <div class="stat-value" id="dashInprogCount">0</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                    <div class="stat-card resolved">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-value" id="dashResCount">0</div>
+                        <div class="stat-label">Resolved</div>
+                    </div>
+                    <div class="stat-card total">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="dashTotalCount">0</div>
+                        <div class="stat-label">Total Volume</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Tickets</h3>
+                        <button class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-tab[data-target=\\'mytickets-page\\']')?.click()">View All</button>
+                    </div>
+                    <div id="dashRecentTickets" class="ticket-list">
+                        <!-- tickets injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 2. MY TICKETS / ASSIGNED -->
+            <div id="mytickets-page" class="page">
+                <div class="page-header-row">
+                    <div>
+                        <h1>My Tickets</h1>
+                        <p>View and track the status of your reported issues.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="UI.navigateTo('newticket-page')">+ New Ticket</button>
+                </div>
+
+                <div class="card">
+                    <div class="filter-row">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="open">Open</button>
+                        <button class="filter-btn" data-filter="in-progress">In Progress</button>
+                        <button class="filter-btn" data-filter="resolved">Resolved</button>
+                        <div style="flex:1"></div>
+                        <div class="search-bar" style="margin:0; min-width:200px;">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" placeholder="Search by ID or title..." onkeyup="UI.filterTickets('mytickets-page', document.querySelector('#mytickets-page .filter-btn.active').dataset.filter)">
+                        </div>
+                    </div>
+                    
+                    <div id="myTicketsList" class="ticket-list"></div>
+                </div>
+            </div>
+
+
+            <!-- 3. ALL TICKETS (ADMIN) -->
+            <div id="alltickets-page" class="page">
+                <div class="page-header-row">
+                    <div>
+                        <h1>System Tickets</h1>
+                        <p>Global view of all system tickets for administration.</p>
+                    </div>
+                    <button class="btn btn-outline" id="exportCsvBtn">📥 Export CSV</button>
+                </div>
+
+                <div class="card">
+                    <div class="filter-row">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="open">Open</button>
+                        <button class="filter-btn" data-filter="in-progress">In Progress</button>
+                        <div style="flex:1"></div>
+                        <div class="search-bar" style="margin:0; min-width:200px;">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" placeholder="Search by ID or title..." onkeyup="UI.filterTickets('alltickets-page', document.querySelector('#alltickets-page .filter-btn.active').dataset.filter)">
+                        </div>
+                    </div>
+                    
+                    <div id="allTicketsList" class="ticket-list"></div>
+                </div>
+            </div>
+
+
+            <!-- 4. NEW TICKET PAGE -->
+            <div id="newticket-page" class="page">
+                <div class="page-header">
+                    <h1>Submit Ticket</h1>
+                    <p>Report a new issue to the ICT helpdesk.</p>
+                </div>
+
+                <div class="card" style="max-width:800px; margin:0 auto;">
+                    <form id="newTicketForm">
+                        <div class="form-group">
+                            <label class="form-label">Ticket Title <span class="required">*</span></label>
+                            <input type="text" id="ticketTitle" class="form-control" placeholder="Brief summary of the issue" required minlength="3" maxlength="100">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Category <span class="required">*</span></label>
+                                <select id="ticketCategory" class="form-control" required>
+                                    <option value="">Select Category...</option>
+                                    <option value="Account & Access">Account & Access</option>
+                                    <option value="Network & WiFi">Network & WiFi</option>
+                                    <option value="Hardware">Hardware / Equipment</option>
+                                    <option value="Software">Software / Apps</option>
+                                    <option value="CBT / E-Learning">CBT / E-Learning</option>
+                                    <option value="University Website">University Website</option>
+                                    <option value="Email">Email</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Specific Issue <span class="required">*</span></label>
+                                <select id="ticketSubCategory" class="form-control" required disabled>
+                                    <option value="">Select Category First...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Priority <span class="required">*</span></label>
+                                <select id="ticketPriority" class="form-control" required>
+                                    <option value="low">Low - General query</option>
+                                    <option value="medium" selected>Medium - Normal issue</option>
+                                    <option value="high">High - Urgent / Stopping work</option>
+                                    <option value="critical">Critical - System disruption / Exam</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Location (Optional)</label>
+                                <input type="text" id="ticketLocation" class="form-control" placeholder="E.g., CS Block Lab 2">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Attachment (Optional, Image max 5MB)</label>
+                            <input type="file" id="ticketAttachment" class="form-control" accept="image/png, image/jpeg">
+                        </div>
+
+                        <div class="form-group mb-2">
+                            <label class="form-label">Description <span class="required">*</span></label>
+                            <textarea id="ticketDesc" class="form-control" placeholder="Please provide as much detail as possible to help us resolve..." required minlength="20" maxlength="2000"></textarea>
+                            <div class="char-count">Min 20 characters</div>
+                        </div>
+
+                        <div class="d-flex" style="justify-content:flex-end; gap:1rem;">
+                            <button type="button" class="btn btn-ghost" onclick="UI.navigateTo('dashboard-page')">Cancel</button>
+                            <button type="submit" id="submitTicketBtn" class="btn btn-primary">Submit Ticket</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- 5. TICKET DETAIL PAGE -->
+            <div id="ticket-detail-page" class="page">
+                <div class="page-header-row" style="margin-bottom: 1rem;">
+                    <div>
+                        <button class="btn btn-ghost btn-sm mb-1" onclick="window.history.back() || UI.navigateTo('dashboard-page')">← Back</button>
+                        <br/>
+                        <div class="ticket-id-copy" title="Copy ID">
+                            <span id="detailTicketId">TKT-XXXX-XXXX</span> 📋
+                        </div>
+                        <h1 id="detailTitle" style="margin-top:0.25rem;">Ticket Title</h1>
+                    </div>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-main">
+                        <!-- Description Box -->
+                        <div class="card mb-2">
+                            <div class="card-header" style="margin-bottom:0.5rem">
+                                <h3>Description</h3>
+                            </div>
+                            <div id="detailDescription" class="detail-description"></div>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Discussion</h3>
+                            </div>
+                            <div id="detailComments" class="comment-list mb-2"></div>
+                            
+                            <hr class="sep">
+                            
+                            <form id="commentForm">
+                                <div class="form-group">
+                                    <textarea id="commentText" class="form-control" placeholder="Add a comment or update..." required style="min-height:80px;"></textarea>
+                                </div>
+                                <div class="d-flex align-center" style="justify-content:space-between">
+                                    <label class="d-flex align-center gap-1 text-sm text-muted">
+                                        <input type="checkbox" id="commentInternal"> Internal Note (Staff only)
+                                    </label>
+                                    <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="detail-sidebar">
+                        <!-- Meta Info -->
+                        <div class="detail-meta-box mb-2">
+                            <div class="detail-field">
+                                <div class="detail-field-label">Status</div>
+                                <div class="detail-field-value"><span id="detailBadgeStatus" class="badge"></span></div>
+                            </div>
+                            <div class="detail-field">
+                                <div class="detail-field-label">Priority</div>
+                                <div class="detail-field-value"><span id="detailBadgePriority" class="badge"></span></div>
+                            </div>
+                            <div class="detail-field">
+                                <div class="detail-field-label">Category</div>
+                                <div class="detail-field-value fw-600" id="detailBadgeCategory"></div>
+                            </div>
+                            <hr class="sep">
+                            <div class="detail-field">
+                                <div class="detail-field-label">Submitted By</div>
+                                <div class="detail-field-value" id="detailSubmitter"></div>
+                            </div>
+                            <div class="detail-field">
+                                <div class="detail-field-label">Created</div>
+                                <div class="detail-field-value" id="detailDate"></div>
+                            </div>
+                            <div class="detail-field">
+                                <div class="detail-field-label">Location / Room</div>
+                                <div class="detail-field-value" id="detailLocation"></div>
+                            </div>
+                            <div class="detail-field">
+                                <div class="detail-field-label">Assigned To</div>
+                                <div class="detail-field-value fw-600" id="detailAssigned"></div>
+                            </div>
+                            <hr class="sep">
+                            <div class="detail-field">
+                                <div class="detail-field-label">Attachment</div>
+                                <div class="detail-field-value" id="detailAttachment">None</div>
+                            </div>
+                        </div>
+
+                        <!-- Admin/Tech Controls -->
+                        <div class="detail-meta-box mb-2" id="detailStatusUpdate" style="display:none; border-color:var(--accent);">
+                            <div class="section-title text-accent" style="border-color:var(--accent);">Update Status</div>
+                            <select id="updateStatusSelect" class="form-control mb-1">
+                                <option value="open">Open</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="closed">Closed</option>
+                                <option value="escalated">Escalated</option>
+                            </select>
+                            <button id="updateStatusBtn" class="btn btn-outline w-full" style="justify-content:center">Save Status</button>
+                        </div>
+
+                        <div class="detail-meta-box" id="detailAssignBox" style="display:none; border-color:var(--warning);">
+                            <div class="section-title text-warning" style="border-color:var(--warning);">Assign Tech</div>
+                            <select id="assignTechSelect" class="form-control mb-1"></select>
+                            <button id="assignBtn" class="btn btn-ghost w-full" style="justify-content:center; color:var(--warning); border-color:var(--warning)">Assign Ticket</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 6. USERS PAGE (ADMIN) -->
+            <div id="users-page" class="page">
+                <div class="page-header-row">
+                    <div>
+                        <h1>User Management</h1>
+                        <p>Approve new registrations and manage system access.</p>
+                    </div>
+                    <button id="addStaffBtn" class="btn btn-primary" onclick="alert('Demo: Staff creation form modal opens here.')">+ Add Staff</button>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Pending Approvals</div>
+                    <div id="pendingUsersGrid" class="users-grid mb-2"></div>
+                </div>
+
+                <div class="section mt-2">
+                    <div class="section-title">Active Users</div>
+                    <div id="activeUsersGrid" class="users-grid"></div>
+                </div>
+            </div>
+
+        </main>
+        
+        <!-- MOBILE BOTTOM NAV -->
+        <nav class="mobile-nav">
+             <button class="mobile-nav-item active" data-target="dashboard-page" data-roles="student,staff,technician,unit-head,admin,super-admin">
+                 <span class="mobile-nav-icon">📊</span>
+                 <span>Home</span>
+             </button>
+             <button class="mobile-nav-item" data-target="mytickets-page" data-roles="student,staff,technician">
+                 <span class="mobile-nav-icon">🎫</span>
+                 <span>Tickets</span>
+             </button>
+             <button class="mobile-nav-item" data-target="newticket-page" data-roles="student,staff,technician">
+                 <span class="mobile-nav-icon">✍️</span>
+                 <span>New</span>
+             </button>
+             <button class="mobile-nav-item" data-target="alltickets-page" data-roles="unit-head,admin,super-admin">
+                 <span class="mobile-nav-icon">📁</span>
+                 <span>Global</span>
+             </button>
+        </nav>
+    </div>
+
+    <!-- NOTIFICATION PANEL OVERLAY -->
+    <div id="notifOverlay" class="notif-overlay"></div>
+    <div id="notifPanel" class="notif-panel">
+        <div class="notif-panel-header">
+            <div class="notif-panel-title">Notifications</div>
+            <div class="notif-panel-actions">
+                <button class="icon-btn" id="clearNotifsBtn" title="Clear all">🧹</button>
+                <button class="icon-btn" id="closeNotifBtn" title="Close">✕</button>
+            </div>
+        </div>
+        <div id="notifList" class="notif-list">
+            <!-- Items injected by JS -->
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPTS -->
+    <script src="./js/utils.js"></script>
+    <script src="./js/data.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/tickets.js"></script>
+    <script src="./js/ui.js"></script>
+
+</body>
+</html>
