@@ -34,6 +34,9 @@ const SEED_USERS = [
     { id: 'u_student1', name: 'Amina Ibrahim', email: 'amina@unijos.edu.ng', role: 'student', authPw: 'pass123', status: 'active', uid: 'MAT/2023/1234' },
     { id: 'u_staff1', name: 'Dr. Bello', email: 'bello@unijos.edu.ng', role: 'staff', authPw: 'pass123', status: 'active', department: 'Computer Science' },
     { id: 'u_tech1', name: 'Musa Technician', email: 'musa@unijos.edu.ng', role: 'technician', authPw: 'ICT@2026', status: 'active', unit: 'Network' },
+    { id: 'u_tech2', name: 'Chukwuemeka Obi', email: 'emeka@unijos.edu.ng', role: 'technician', authPw: 'ICT@2026', status: 'active', unit: 'Hardware' },
+    { id: 'u_unithead1', name: 'Fatima Al-Amin', email: 'fatima@unijos.edu.ng', role: 'unit-head', authPw: 'ICT@2026', status: 'active', unit: 'Network' },
+    { id: 'u_dispatcher', name: 'Hauwa Ibrahim', email: 'hauwa@unijos.edu.ng', role: 'dispatcher', authPw: 'ICT@2026', status: 'active' },
     { id: 'u_student_pending', name: 'Joy Essien', email: 'joy@unijos.edu.ng', role: 'student', authPw: 'pass123', status: 'pending', uid: 'BIO/2024/5678' }
 ];
 
@@ -97,14 +100,16 @@ let currentUsers = DemoDB.get('users', null);
 if (!currentUsers) {
     DemoDB.set('users', SEED_USERS);
 } else {
-    // Ensure Super-Admin exists for testing if they already initialized storage before update
-    if (!currentUsers.find(u => u.id === 'u_sadmin')) {
-        const sAdmin = SEED_USERS.find(u => u.id === 'u_sadmin');
-        if (sAdmin) {
-            currentUsers.unshift(sAdmin);
-            DemoDB.set('users', currentUsers);
+    // Ensure seed users added in later updates exist for sessions already initialised
+    const seedIds = ['u_sadmin', 'u_tech2', 'u_unithead1', 'u_dispatcher'];
+    let changed = false;
+    seedIds.forEach(id => {
+        if (!currentUsers.find(u => u.id === id)) {
+            const user = SEED_USERS.find(u => u.id === id);
+            if (user) { currentUsers.push(user); changed = true; }
         }
-    }
+    });
+    if (changed) DemoDB.set('users', currentUsers);
 }
 
 if (!DemoDB.get('tickets', null)) {
@@ -112,6 +117,9 @@ if (!DemoDB.get('tickets', null)) {
 }
 if (!DemoDB.get('notifications', null)) {
     DemoDB.set('notifications', {});
+}
+if (!DemoDB.get('audit_log', null)) {
+    DemoDB.set('audit_log', []);
 }
 
 // Data Access Service
@@ -166,6 +174,39 @@ const DataService = {
              notifs[userId] = notifs[userId].map(n => ({...n, read: true}));
              DemoDB.set('notifications', notifs);
         }
+    },
+    markNotificationRead: (userId, notifId) => {
+        const notifs = DemoDB.get('notifications', {});
+        if (notifs[userId]) {
+             const idx = notifs[userId].findIndex(n => n.id === notifId);
+             if (idx !== -1) {
+                  notifs[userId][idx] = { ...notifs[userId][idx], read: true };
+                  DemoDB.set('notifications', notifs);
+             }
+        }
+    },
+    removeNotification: (userId, notifId) => {
+        const notifs = DemoDB.get('notifications', {});
+        if (notifs[userId]) {
+             notifs[userId] = notifs[userId].filter(n => n.id !== notifId);
+             DemoDB.set('notifications', notifs);
+        }
+    },
+
+    getAuditLog: () => DemoDB.get('audit_log', []),
+
+    logAction: (action, performedBy, performedById, target, detail) => {
+        const log = DataService.getAuditLog();
+        log.unshift({
+            id: 'al_' + Math.random().toString(36).substr(2, 9),
+            action,
+            performedBy,
+            performedById,
+            target,
+            detail,
+            time: new Date().toISOString()
+        });
+        DemoDB.set('audit_log', log.slice(0, 500));
     }
 };
 

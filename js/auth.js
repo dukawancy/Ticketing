@@ -27,6 +27,8 @@ const AuthService = {
                     return;
                 }
 
+                user.lastLogin = new Date().toISOString();
+                window.DataService.saveUser(user);
                 resolve({ status: 'success', user: user });
             }, 500); // Simulate network
         });
