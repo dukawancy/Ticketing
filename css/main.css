@@ -2016,19 +2016,24 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   width: 100%;
 }
 
-.global-search-icon {
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  pointer-events: none;
-  flex-shrink: 0;
-}
 
+.global-search-icon {
+ position: absolute;
+ left: 0.65rem;
+ top: 50%;
+ transform: translateY(-50%);
+ color: var(--text-muted);
+ pointer-events: none;
+ display: flex;
+ align-items: center;
+}
+.global-search-icon svg {
+ width: 15px;
+ height: 15px;
+}
 .global-search-input {
   width: 100%;
-  padding: 0.45rem 0.75rem 0.45rem 2.25rem;
+  padding: 0.45rem 0.75rem 0.45rem 2rem;
   background: var(--surface-2);
   border: 1px solid var(--border-sm);
   border-radius: 9999px;
