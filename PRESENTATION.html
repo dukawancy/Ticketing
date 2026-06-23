@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIJOS ICT Helpdesk — Project Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #08090d;
+            --surface: #11131a;
+            --surface2: #181b25;
+            --border: rgba(255,255,255,0.06);
+            --text: #eef0f6;
+            --text-dim: #8b90a7;
+            --accent: #6c8cff;
+            --accent2: #a78bfa;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --gradient: linear-gradient(135deg, #6c8cff 0%, #a78bfa 50%, #f472b6 100%);
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ── Slide Container ── */
+        .deck {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 6rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.55s ease, transform 0.55s ease;
+            transform: translateX(60px);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .slide.exit-left {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        /* ── Typography ── */
+        .slide-number {
+            position: absolute;
+            top: 2.5rem;
+            left: 3.5rem;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 0.05em;
+        }
+
+        .slide-tag {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slide-tag::before {
+            content: '';
+            width: 24px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        h1.hero-title {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+        }
+
+        h1.hero-title .gradient-text {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2.slide-title {
+            font-size: clamp(1.8rem, 3.5vw, 3rem);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+        }
+
+        h2.slide-title .gradient-text {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+            max-width: 680px;
+            text-align: center;
+        }
+
+        /* ── Cards / Grid ── */
+        .cards-grid {
+            display: grid;
+            gap: 1.25rem;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 1.5rem;
+        }
+
+        .cards-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .cards-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .cards-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(108, 140, 255, 0.15);
+        }
+
+        .info-card .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .info-card .card-icon.blue { background: rgba(108, 140, 255, 0.12); color: var(--accent); }
+        .info-card .card-icon.purple { background: rgba(167, 139, 250, 0.12); color: var(--accent2); }
+        .info-card .card-icon.green { background: rgba(52, 211, 153, 0.12); color: var(--success); }
+        .info-card .card-icon.orange { background: rgba(251, 191, 36, 0.12); color: var(--warning); }
+        .info-card .card-icon.red { background: rgba(248, 113, 113, 0.12); color: var(--danger); }
+        .info-card .card-icon.pink { background: rgba(244, 114, 182, 0.12); color: #f472b6; }
+
+        .info-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* ── Role cards ── */
+        .role-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .role-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .role-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .role-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .role-desc {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .role-perms {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .role-perms li {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .role-perms li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+            font-size: 0.7rem;
+        }
+
+        /* ── Tech stack pills ── */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            max-width: 800px;
+        }
+
+        .tech-pill {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.6rem 1.4rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .tech-pill:hover { background: var(--surface2); }
+
+        .tech-pill .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* ── Workflow ── */
+        .workflow {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            margin-top: 2rem;
+            max-width: 950px;
+            width: 100%;
+        }
+
+        .workflow-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .workflow-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 22px;
+            right: -1rem;
+            width: calc(100%);
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
+            opacity: 0.25;
+            z-index: 0;
+        }
+
+        .workflow-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 2px solid var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .workflow-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .workflow-desc {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+            padding: 0 0.5rem;
+        }
+
+        /* ── Stats ── */
+        .stat-block {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        /* ── Table ── */
+        .slide-table {
+            width: 100%;
+            max-width: 900px;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .slide-table th {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-dim);
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .slide-table td {
+            font-size: 0.85rem;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .slide-table tbody tr:hover { background: var(--surface); }
+
+        .priority-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.4rem;
+        }
+
+        /* ── Navigation ── */
+        .nav-bar {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(17, 19, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
+        .nav-counter {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .nav-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .nav-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            opacity: 0.3;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .nav-dot.active {
+            opacity: 1;
+            background: var(--accent);
+            width: 20px;
+            border-radius: 10px;
+        }
+
+        /* ── Progress Bar ── */
+        .progress-track {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--border);
+            z-index: 200;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            transition: width 0.4s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* ── Decorative ── */
+        .glow-orb {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        .glow-orb.blue { background: #6c8cff; }
+        .glow-orb.purple { background: #a78bfa; }
+        .glow-orb.pink { background: #f472b6; }
+
+        /* ── Feature List ── */
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 1rem;
+            max-width: 600px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.88rem;
+            padding: 0.6rem 1rem;
+            background: var(--surface);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .feature-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            background: rgba(52, 211, 153, 0.15);
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ── Columns Layout ── */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            width: 100%;
+            max-width: 1000px;
+            align-items: start;
+        }
+
+        .col-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        /* ── Keyboard Shortcuts Toast ── */
+        .keys-toast {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            opacity: 1;
+            transition: opacity 1s ease 4s;
+        }
+
+        .keys-toast.fade { opacity: 0; }
+
+        kbd {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.15rem 0.4rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            min-width: 22px;
+        }
+
+        /* ── Fullscreen Button ── */
+        .fullscreen-btn {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.5rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .fullscreen-btn:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        /* ── Architecture Diagram ── */
+        .arch-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .arch-box.accent {
+            border-color: rgba(108, 140, 255, 0.25);
+            background: rgba(108, 140, 255, 0.05);
+        }
+
+        .arch-arrow {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            padding: 0.3rem 0;
+        }
+
+        .arch-row {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .arch-row .arch-box { flex: 1; }
+
+        /* ── Contact / CTA ── */
+        .cta-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px dashed rgba(108,140,255,0.4);
+            transition: border-color 0.2s;
+        }
+
+        .cta-link:hover { border-color: var(--accent); }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            font-family: var(--mono);
+        }
+
+        .badge.green { background: rgba(52,211,153,0.12); color: var(--success); }
+        .badge.blue  { background: rgba(108,140,255,0.12); color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .slide { padding: 3rem 2rem; }
+            .cards-grid.cols-3, .cards-grid.cols-4 { grid-template-columns: 1fr 1fr; }
+            .two-col { grid-template-columns: 1fr; gap: 2rem; }
+            .workflow { flex-direction: column; gap: 1rem; }
+            .workflow-step:not(:last-child)::after { display: none; }
+            .arch-row { flex-direction: column; }
+        }
+
+        /* ── Print ── */
+        @media print {
+            .nav-bar, .keys-toast, .fullscreen-btn, .progress-track { display: none !important; }
+            .slide { position: relative; opacity: 1; visibility: visible; transform: none; page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+
+    <!-- Keyboard hints -->
+    <div class="keys-toast" id="keysToast">
+        <span>Navigate:</span>
+        <span><kbd>←</kbd> <kbd>→</kbd> Arrow keys</span>
+        <span><kbd>F</kbd> Fullscreen</span>
+    </div>
+
+    <!-- Fullscreen toggle -->
+    <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+            <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+    </button>
+
+    <div class="deck" id="deck">
+
+        <!-- ═══════════════════ SLIDE 1: TITLE ═══════════════════ -->
+        <div class="slide active" data-slide="0">
+            <div class="glow-orb blue" style="top: -200px; right: -100px;"></div>
+            <div class="glow-orb purple" style="bottom: -200px; left: -150px;"></div>
+            <span class="slide-number">01 / 12</span>
+            <div class="slide-tag">University of Jos · ICT Directorate</div>
+            <h1 class="hero-title" style="text-align: center;">ICT Helpdesk<br><span class="gradient-text">Ticketing System</span></h1>
+            <p class="slide-subtitle">A comprehensive, production-ready IT support platform built for the University of Jos — empowering students, staff, and technicians with a seamless digital helpdesk experience.</p>
+            <div class="tech-stack" style="margin-top: 2rem;">
+                <span class="badge green">● Production Ready</span>
+                <span class="badge blue">v2.0</span>
+            </div>
+            <div style="margin-top: 2.5rem; font-size: 0.75rem; color: var(--text-dim); font-family: var(--mono);">
+                June 2026 · Project Presentation
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 2: PROBLEM ═══════════════════ -->
+        <div class="slide" data-slide="1">
+            <div class="glow-orb pink" style="top: -150px; left: -100px;"></div>
+            <span class="slide-number">02 / 12</span>
+            <div class="slide-tag">The Problem</div>
+            <h2 class="slide-title" style="text-align: center;">Why This <span class="gradient-text">System Matters</span></h2>
+            <p class="slide-subtitle" style="margin-bottom: 2rem;">Without a centralized ticketing system, universities face significant operational challenges in IT support delivery.</p>
+            <div class="cards-grid cols-3">
+                <div class="info-card">
+                    <div class="card-icon red">⏰</div>
+                    <h3>Slow Response</h3>
+                    <p>Issues reported via email, phone, or walk-in get lost, duplicated, or forgotten with no tracking mechanism.</p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon orange">📋</div>
+                    <h3>No Accountability</h3>
+                    <p>Without assignment tracking, it's impossible to know who is handling what, leading to duplicated effort or neglect.</p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon purple">📊</div>
+                    <h3>Zero Analytics</h3>
+                    <p>Management has no visibility into recurring issues, team performance, or SLA compliance without proper data.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 3: SOLUTION ═══════════════════ -->
+        <div class="slide" data-slide="2">
+            <div class="glow-orb blue" style="bottom: -200px; right: -150px;"></div>
+            <span class="slide-number">03 / 12</span>
+            <div class="slide-tag">Our Solution</div>
+            <h2 class="slide-title" style="text-align: center;">A Complete <span class="gradient-text">Digital Helpdesk</span></h2>
+            <p class="slide-subtitle" style="margin-bottom: 2rem;">End-to-end lifecycle management for IT support — from ticket submission to resolution and analytics.</p>
+            <div class="cards-grid cols-4">
+                <div class="info-card" style="text-align:center;">
+                    <div class="card-icon blue" style="margin: 0 auto 1rem;">🎫</div>
+                    <h3>Smart Ticketing</h3>
+                    <p>Dynamic categories, priority levels, and SLA tracking</p>
+                </div>
+                <div class="info-card" style="text-align:center;">
+                    <div class="card-icon purple" style="margin: 0 auto 1rem;">🔐</div>
+                    <h3>Role-Based Access</h3>
+                    <p>5 distinct roles with tailored permissions & dashboards</p>
+                </div>
+                <div class="info-card" style="text-align:center;">
+                    <div class="card-icon green" style="margin: 0 auto 1rem;">🔔</div>
+                    <h3>Real-Time Alerts</h3>
+                    <p>In-app notifications, browser push, and toast messages</p>
+                </div>
+                <div class="info-card" style="text-align:center;">
+                    <div class="card-icon orange" style="margin: 0 auto 1rem;">📈</div>
+                    <h3>Analytics</h3>
+                    <p>Charts, SLA compliance, technician performance metrics</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 4: USER ROLES ═══════════════════ -->
+        <div class="slide" data-slide="3">
+            <span class="slide-number">04 / 12</span>
+            <div class="slide-tag">Access Control</div>
+            <h2 class="slide-title" style="text-align: center;">User Roles &amp; <span class="gradient-text">Permissions</span></h2>
+            <div class="cards-grid cols-3" style="margin-top: 1rem;">
+                <div class="role-card">
+                    <div class="role-header">
+                        <div class="role-avatar" style="background: rgba(108,140,255,0.15); color: var(--accent);">🎓</div>
+                        <div class="role-name">Student / Staff</div>
+                    </div>
+                    <p class="role-desc">Self-register with @unijos.edu.ng email. Submit and track personal tickets.</p>
+                    <ul class="role-perms">
+                        <li>Submit support tickets</li>
+                        <li>Track own ticket status</li>
+                        <li>Add comments & attachments</li>
+                        <li>Receive status notifications</li>
+                    </ul>
+                </div>
+                <div class="role-card">
+                    <div class="role-header">
+                        <div class="role-avatar" style="background: rgba(251,191,36,0.15); color: var(--warning);">🔧</div>
+                        <div class="role-name">Technician</div>
+                    </div>
+                    <p class="role-desc">Admin-created accounts. Manage assigned work queue and resolve issues.</p>
+                    <ul class="role-perms">
+                        <li>View assigned ticket queue</li>
+                        <li>Update ticket status</li>
+                        <li>Add internal tech notes</li>
+                        <li>Resolve & close tickets</li>
+                    </ul>
+                </div>
+                <div class="role-card">
+                    <div class="role-header">
+                        <div class="role-avatar" style="background: rgba(248,113,113,0.15); color: var(--danger);">🛡️</div>
+                        <div class="role-name">Admin / Director</div>
+                    </div>
+                    <p class="role-desc">Full system access. Manage users, tickets, analytics, and configuration.</p>
+                    <ul class="role-perms">
+                        <li>Manage all user accounts</li>
+                        <li>Assign tickets to technicians</li>
+                        <li>System-wide analytics</li>
+                        <li>CSV export & audit logs</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 1rem;">+ Unit Head & Dispatcher roles for team management and ticket triage</p>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 5: TICKET WORKFLOW ═══════════════════ -->
+        <div class="slide" data-slide="4">
+            <div class="glow-orb purple" style="top: -200px; right: -200px;"></div>
+            <span class="slide-number">05 / 12</span>
+            <div class="slide-tag">Ticket Lifecycle</div>
+            <h2 class="slide-title" style="text-align: center;">How Tickets <span class="gradient-text">Flow</span></h2>
+            <p class="slide-subtitle" style="margin-bottom: 1rem;">Each ticket follows a structured lifecycle with built-in SLA monitoring.</p>
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="workflow-num">1</div>
+                    <div class="workflow-label">Submit</div>
+                    <div class="workflow-desc">Student or staff submits ticket with category, priority, and description</div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-num">2</div>
+                    <div class="workflow-label">Triage</div>
+                    <div class="workflow-desc">Dispatcher routes ticket to the appropriate ICT unit</div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-num">3</div>
+                    <div class="workflow-label">Assign</div>
+                    <div class="workflow-desc">Unit Head or Admin assigns the ticket to a specific technician</div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-num">4</div>
+                    <div class="workflow-label">Work</div>
+                    <div class="workflow-desc">Technician works on the issue, adds notes, updates status</div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-num">5</div>
+                    <div class="workflow-label">Resolve</div>
+                    <div class="workflow-desc">Issue fixed, user confirms resolution, ticket is closed</div>
+                </div>
+            </div>
+            <table class="slide-table" style="margin-top: 2rem;">
+                <thead>
+                    <tr>
+                        <th>Priority</th>
+                        <th>Response Time</th>
+                        <th>Auto-Escalate</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="priority-dot" style="background: var(--danger);"></span> Critical</td>
+                        <td>1 hour</td>
+                        <td>2 hours</td>
+                        <td>CBT exam server down</td>
+                    </tr>
+                    <tr>
+                        <td><span class="priority-dot" style="background: var(--warning);"></span> High</td>
+                        <td>4 hours</td>
+                        <td>12 hours</td>
+                        <td>Faculty internet outage</td>
+                    </tr>
+                    <tr>
+                        <td><span class="priority-dot" style="background: var(--accent);"></span> Medium</td>
+                        <td>24 hours</td>
+                        <td>3 days</td>
+                        <td>Lab PC not working</td>
+                    </tr>
+                    <tr>
+                        <td><span class="priority-dot" style="background: var(--success);"></span> Low</td>
+                        <td>72 hours</td>
+                        <td>7 days</td>
+                        <td>Software install request</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 6: FEATURES ═══════════════════ -->
+        <div class="slide" data-slide="5">
+            <span class="slide-number">06 / 12</span>
+            <div class="slide-tag">Key Features</div>
+            <h2 class="slide-title" style="text-align: center;">Feature <span class="gradient-text">Highlights</span></h2>
+            <div class="two-col" style="margin-top: 1.5rem;">
+                <div class="col-content">
+                    <h3>🎫 Ticket Management</h3>
+                    <div class="feature-list">
+                        <div class="feature-item"><div class="feature-check">✓</div> 8 ticket categories with sub-categories</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> 4-level priority system with SLA</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> File attachments (images up to 5 MB)</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Comment threading with internal notes</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Bulk operations (close, assign)</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Advanced filtering, search & sorting</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> CSV export for reporting</div>
+                    </div>
+                </div>
+                <div class="col-content">
+                    <h3>👥 User & System</h3>
+                    <div class="feature-list">
+                        <div class="feature-item"><div class="feature-check">✓</div> Hybrid auth (self-register + admin-create)</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Admin approval workflow</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Force password change on first login</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Real-time push notifications</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Interactive analytics dashboard</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Audit log & activity tracking</div>
+                        <div class="feature-item"><div class="feature-check">✓</div> Dark mode responsive UI</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 7: TICKET CATEGORIES ═══════════════════ -->
+        <div class="slide" data-slide="6">
+            <div class="glow-orb blue" style="top: -150px; left: -200px;"></div>
+            <span class="slide-number">07 / 12</span>
+            <div class="slide-tag">Ticket Categories</div>
+            <h2 class="slide-title" style="text-align: center;">Comprehensive <span class="gradient-text">Issue Taxonomy</span></h2>
+            <p class="slide-subtitle" style="margin-bottom: 1.5rem;">8 main categories with specific sub-categories for precise classification and routing.</p>
+            <div class="cards-grid cols-4">
+                <div class="info-card" style="text-align: center;">
+                    <div class="card-icon blue" style="margin: 0 auto 0.75rem;">🔑</div>
+                    <h3>Account & Access</h3>
+                    <p>Portal login, email access, password reset, new accounts</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div class="card-icon green" style="margin: 0 auto 0.75rem;">🌐</div>
+                    <h3>Network & WiFi</h3>
+                    <p>No internet, slow connection, WiFi issues, VPN</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div class="card-icon orange" style="margin: 0 auto 0.75rem;">🖥️</div>
+                    <h3>Hardware</h3>
+                    <p>Computers, printers, projectors, peripherals</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div class="card-icon purple" style="margin: 0 auto 0.75rem;">💿</div>
+                    <h3>Software</h3>
+                    <p>Installation, crashes, licensing, updates</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div class="card-icon red" style="margin: 0 auto 0.75rem;">📝</div>
+                    <h3>CBT / E-Learning</h3>
+                    <p>Exam portal, submission, LMS login, courses</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div class="card-icon pink" style="margin: 0 auto 0.75rem;">🌍</div>
+                    <h3>University Website</h3>
+                    <p>Page loading, wrong information, broken forms</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div class="card-icon blue" style="margin: 0 auto 0.75rem;">📧</div>
+                    <h3>Email</h3>
+                    <p>Setup, send/receive issues, spam</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div class="card-icon green" style="margin: 0 auto 0.75rem;">📌</div>
+                    <h3>Other</h3>
+                    <p>Miscellaneous issues not covered above</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 8: TECH STACK ═══════════════════ -->
+        <div class="slide" data-slide="7">
+            <span class="slide-number">08 / 12</span>
+            <div class="slide-tag">Architecture</div>
+            <h2 class="slide-title" style="text-align: center;">Technology <span class="gradient-text">Stack</span></h2>
+            <p class="slide-subtitle" style="margin-bottom: 2rem;">Built with modern, reliable technologies — optimized for performance and maintainability.</p>
+            <div class="tech-stack">
+                <div class="tech-pill"><span class="dot" style="background: #e34c26;"></span> HTML5</div>
+                <div class="tech-pill"><span class="dot" style="background: #264de4;"></span> CSS3</div>
+                <div class="tech-pill"><span class="dot" style="background: #f7df1e;"></span> JavaScript ES6+</div>
+                <div class="tech-pill"><span class="dot" style="background: #FFCA28;"></span> Firebase Auth</div>
+                <div class="tech-pill"><span class="dot" style="background: #FF6F00;"></span> Cloud Firestore</div>
+                <div class="tech-pill"><span class="dot" style="background: #039BE5;"></span> Cloud Functions</div>
+                <div class="tech-pill"><span class="dot" style="background: #00C7B7;"></span> Netlify / Vercel</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem; margin-top: 2.5rem; width: 100%;">
+                <div class="arch-box accent" style="width: 100%; max-width: 400px;">Frontend (SPA) — HTML5 / CSS3 / JS</div>
+                <div class="arch-arrow">↕</div>
+                <div class="arch-row">
+                    <div class="arch-box">Firebase Auth</div>
+                    <div class="arch-box">Cloud Firestore</div>
+                    <div class="arch-box">Cloud Functions</div>
+                </div>
+                <div class="arch-arrow">↕</div>
+                <div class="arch-row">
+                    <div class="arch-box">Push Notifications (FCM)</div>
+                    <div class="arch-box">Email Triggers</div>
+                    <div class="arch-box">SLA Monitor</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 9: NOTIFICATION SYSTEM ═══════════════════ -->
+        <div class="slide" data-slide="8">
+            <div class="glow-orb purple" style="bottom: -200px; left: -150px;"></div>
+            <span class="slide-number">09 / 12</span>
+            <div class="slide-tag">Notifications</div>
+            <h2 class="slide-title" style="text-align: center;">Real-Time <span class="gradient-text">Alert System</span></h2>
+            <p class="slide-subtitle" style="margin-bottom: 2rem;">Multi-channel notification system keeps all stakeholders informed instantly.</p>
+            <div class="cards-grid cols-3">
+                <div class="info-card">
+                    <div class="card-icon blue">🔔</div>
+                    <h3>In-App Notifications</h3>
+                    <p>Notification bell with unread badge count. Chronological list, mark as read, clear all, click to jump to ticket.</p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon purple">💻</div>
+                    <h3>Browser Push</h3>
+                    <p>Desktop notifications via Firebase Cloud Messaging. Works even when the tab is in background.</p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon green">✨</div>
+                    <h3>Toast Messages</h3>
+                    <p>Real-time feedback popups for user actions. Success, error, and warning variants with 3-second auto-dismiss.</p>
+                </div>
+            </div>
+            <div style="margin-top: 2rem;">
+                <h3 style="font-size: 0.95rem; margin-bottom: 1rem; text-align: center;">Notification Triggers</h3>
+                <div class="cards-grid cols-4" style="max-width: 800px; gap: 0.75rem;">
+                    <div class="info-card" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 1.2rem; margin-bottom: 0.4rem;">📋</div>
+                        <p style="font-size: 0.72rem;">Status Change</p>
+                    </div>
+                    <div class="info-card" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 1.2rem; margin-bottom: 0.4rem;">💬</div>
+                        <p style="font-size: 0.72rem;">New Comment</p>
+                    </div>
+                    <div class="info-card" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 1.2rem; margin-bottom: 0.4rem;">👤</div>
+                        <p style="font-size: 0.72rem;">Assignment</p>
+                    </div>
+                    <div class="info-card" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 1.2rem; margin-bottom: 0.4rem;">⚠️</div>
+                        <p style="font-size: 0.72rem;">SLA Escalation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 10: ANALYTICS ═══════════════════ -->
+        <div class="slide" data-slide="9">
+            <span class="slide-number">10 / 12</span>
+            <div class="slide-tag">Analytics & Reporting</div>
+            <h2 class="slide-title" style="text-align: center;">Data-Driven <span class="gradient-text">Insights</span></h2>
+            <p class="slide-subtitle" style="margin-bottom: 2rem;">Role-specific dashboards with interactive charts and exportable reports.</p>
+            <div class="cards-grid cols-4" style="margin-bottom: 2rem;">
+                <div class="stat-block">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Status Charts</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-value">SLA</div>
+                    <div class="stat-label">Compliance %</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-value">CSV</div>
+                    <div class="stat-label">Export Reports</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-value">5+</div>
+                    <div class="stat-label">Dashboard Views</div>
+                </div>
+            </div>
+            <div class="cards-grid cols-3">
+                <div class="info-card">
+                    <div class="card-icon blue">📊</div>
+                    <h3>Status Distribution</h3>
+                    <p>Donut chart showing tickets by status (Open, In Progress, Resolved, Closed, Escalated).</p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon orange">📉</div>
+                    <h3>Priority Breakdown</h3>
+                    <p>Bar chart visualizing ticket priority distribution — Critical to Low.</p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon green">🏆</div>
+                    <h3>Top Technicians</h3>
+                    <p>Leaderboard ranking technicians by tickets resolved with performance bars.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 11: DEPLOYMENT ═══════════════════ -->
+        <div class="slide" data-slide="10">
+            <div class="glow-orb blue" style="top: -200px; left: -200px;"></div>
+            <span class="slide-number">11 / 12</span>
+            <div class="slide-tag">Deployment</div>
+            <h2 class="slide-title" style="text-align: center;">Deployment <span class="gradient-text">Options</span></h2>
+            <p class="slide-subtitle" style="margin-bottom: 2rem;">Flexible hosting options — from instant demo to full production environment.</p>
+            <div class="cards-grid cols-3">
+                <div class="info-card">
+                    <div class="card-icon green">⚡</div>
+                    <h3>Demo Mode</h3>
+                    <p>Open index.html in browser. Uses localStorage — zero setup required. Perfect for testing and presentations.</p>
+                    <div style="margin-top: 0.75rem;">
+                        <span class="badge green">Ready Now</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon orange">🔥</div>
+                    <h3>Firebase Hosting</h3>
+                    <p>Full production setup with Firestore database, Firebase Auth, Cloud Functions, and real-time sync.</p>
+                    <div style="margin-top: 0.75rem;">
+                        <span class="badge blue">Recommended</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon purple">🌐</div>
+                    <h3>Netlify / Vercel</h3>
+                    <p>Instant CDN deployment with custom domains, SSL, and global edge network. Connect to Firebase backend.</p>
+                    <div style="margin-top: 0.75rem;">
+                        <span class="badge blue">Alternative</span>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem 2rem; max-width: 550px; width: 100%;">
+                <h3 style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--accent);">Quick Demo Launch</h3>
+                <code style="font-family: var(--mono); font-size: 0.82rem; color: var(--text-dim); display: block; line-height: 2;">
+                    $ git clone [repo-url]<br>
+                    $ cd ICT_TICKETING_SYSTEM<br>
+                    $ npx serve .  <span style="color: var(--success);"># Opens at localhost:3000</span>
+                </code>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ SLIDE 12: THANK YOU ═══════════════════ -->
+        <div class="slide" data-slide="11">
+            <div class="glow-orb blue" style="top: -200px; right: -200px;"></div>
+            <div class="glow-orb purple" style="bottom: -200px; left: -200px;"></div>
+            <div class="glow-orb pink" style="top: 50%; right: -300px;"></div>
+            <span class="slide-number">12 / 12</span>
+            <div class="slide-tag">Thank You</div>
+            <h1 class="hero-title" style="text-align: center; font-size: clamp(2rem, 4vw, 3.5rem);">
+                Thank You<br>
+                <span class="gradient-text">Questions?</span>
+            </h1>
+            <p class="slide-subtitle" style="margin-bottom: 2.5rem;">
+                This system is ready for deployment at the University of Jos ICT Directorate.<br>
+                We welcome your feedback and questions.
+            </p>
+            <div class="cards-grid cols-3" style="max-width: 750px;">
+                <div class="info-card" style="text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📧</div>
+                    <h3>Email</h3>
+                    <p>ict@unijos.edu.ng</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌐</div>
+                    <h3>Live Demo</h3>
+                    <p>Open index.html</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📚</div>
+                    <h3>Documentation</h3>
+                    <p>docs/ folder</p>
+                </div>
+            </div>
+            <div style="margin-top: 2.5rem; font-size: 0.78rem; color: var(--text-dim); text-align: center; line-height: 1.8;">
+                <strong style="color: var(--text);">ICT Helpdesk Ticketing System v2.0</strong><br>
+                University of Jos · ICT Directorate · June 2026
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar" id="navBar">
+        <button class="nav-btn" id="prevBtn" onclick="goToSlide(currentSlide - 1)" disabled aria-label="Previous slide">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="nav-dots" id="navDots"></div>
+        <span class="nav-counter" id="navCounter">1 / 12</span>
+        <button class="nav-btn" id="nextBtn" onclick="goToSlide(currentSlide + 1)" aria-label="Next slide">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+    </nav>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+        let isTransitioning = false;
+
+        // Build dots
+        const dotsContainer = document.getElementById('navDots');
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('button');
+            dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => goToSlide(i);
+            dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+            dotsContainer.appendChild(dot);
+        }
+
+        function goToSlide(n) {
+            if (isTransitioning || n < 0 || n >= totalSlides || n === currentSlide) return;
+            isTransitioning = true;
+
+            const direction = n > currentSlide ? 1 : -1;
+            const currentEl = slides[currentSlide];
+            const nextEl = slides[n];
+
+            // Exit current
+            currentEl.classList.remove('active');
+            currentEl.classList.add(direction > 0 ? 'exit-left' : '');
+            currentEl.style.transform = direction > 0 ? 'translateX(-60px)' : 'translateX(60px)';
+
+            // Enter next
+            nextEl.style.transform = direction > 0 ? 'translateX(60px)' : 'translateX(-60px)';
+            nextEl.classList.remove('exit-left');
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    nextEl.classList.add('active');
+                    nextEl.style.transform = 'translateX(0)';
+                });
+            });
+
+            // Update state
+            currentSlide = n;
+            updateNav();
+
+            setTimeout(() => {
+                currentEl.classList.remove('exit-left');
+                isTransitioning = false;
+            }, 550);
+        }
+
+        function updateNav() {
+            document.getElementById('navCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+            document.getElementById('progressFill').style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+
+            document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                goToSlide(currentSlide + 1);
+            }
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                goToSlide(currentSlide - 1);
+            }
+            if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+            if (e.key === 'Home') goToSlide(0);
+            if (e.key === 'End') goToSlide(totalSlides - 1);
+        });
+
+        // Touch / swipe support
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 50) {
+                diff > 0 ? goToSlide(currentSlide + 1) : goToSlide(currentSlide - 1);
+            }
+        }, { passive: true });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Auto-hide keyboard toast
+        setTimeout(() => {
+            document.getElementById('keysToast')?.classList.add('fade');
+        }, 100);
+
+        setTimeout(() => {
+            document.getElementById('keysToast')?.remove();
+        }, 6000);
+    </script>
+</body>
+</html>
