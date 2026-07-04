@@ -1226,6 +1226,24 @@ const UI = {
                         if (updated) {
                             window.Utils.showToast('Success', 'Status updated successfully', 'success');
                             UI.openTicketDetail(updated.id);
+                                 // If Firebase functions are available, request server to send transactional email
+                                 if (newStatus === 'resolved' || newStatus === 'closed') {
+                                      try {
+                                           if (window.firebase && firebase.functions) {
+                                                const sendFn = firebase.functions().httpsCallable('sendResolveEmail');
+                                                sendFn({ ticketId: updated.id })
+                                                     .then(() => {
+                                                          window.Utils.showToast('Email', 'Resolution email sent to submitter', 'success');
+                                                     })
+                                                     .catch(err => {
+                                                          console.warn('sendResolveEmail error', err);
+                                                          window.Utils.showToast('Email Error', err.message || 'Could not send email', 'warning');
+                                                     });
+                                           }
+                                      } catch (e) {
+                                           console.warn('Error invoking sendResolveEmail', e);
+                                      }
+                                 }
                         }
                    };
               } else {
