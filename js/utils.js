@@ -132,16 +132,18 @@ const Utils = {
         return `${m}m left`;
     },
 
-    // Subcategory mapping
-    SUBCATEGORIES: {
-         'Account & Access': ['Portal Login', 'Email Access', 'Password Reset', 'New Account Request'],
-         'Network & WiFi': ['No Internet', 'Slow Connection', 'WiFi Not Showing', 'VPN Issues'],
-         'Hardware': ['Computer Not Working', 'Printer Issue', 'Projector Fault', 'Mouse/Keyboard Problems'],
-         'Software': ['Software Installation', 'System Crash', 'License Issue', 'Update Problem'],
-         'CBT / E-Learning': ['Exam Portal Error', 'Submission Failed', 'LMS Login Issues', 'Course Not Showing'],
-         'University Website': ['Page Not Loading', 'Wrong Information', 'Form Not Working'],
-         'Email': ['Email Setup', 'Cannot Send', 'Cannot Receive', 'Spam Issues'],
-         'Other': ['Miscellaneous issues']
+    getCategories: () => {
+         return window.DataService ? window.DataService.getCategories() : [];
+    },
+
+    getCategoryByName: (name) => {
+         if (!window.DataService) return undefined;
+         return window.DataService.getCategoryByName(name);
+    },
+
+    getCategorySubcategories: (name) => {
+         const category = Utils.getCategoryByName(name);
+         return category ? category.subcategories || [] : [];
     }
 };
 

@@ -6,6 +6,7 @@
 const UI = {
     init: () => {
         UI.bindEvents();
+        UI.populateCategorySelects();
         UI.checkAuth();
 
         // Keyboard shortcuts (only when app is active and no input focused)
@@ -88,6 +89,28 @@ const UI = {
                   UI.filterTickets(view, e.currentTarget.dataset.filter);
              });
         });
+    },
+
+    populateCategorySelects: () => {
+         const categories = window.DataService.getCategories();
+         const categoryOptions = categories.map(c => `<option value="${window.Utils.escapeHtml(c.name)}">${window.Utils.escapeHtml(c.name)}</option>`).join('');
+
+         document.querySelectorAll('.category-filter').forEach(select => {
+              const previous = select.value || 'all';
+              select.innerHTML = `<option value="all">All Categories</option>${categoryOptions}`;
+              if (previous && previous !== 'all' && categories.some(c => c.name === previous)) {
+                   select.value = previous;
+              }
+         });
+
+         const ticketCategory = document.getElementById('ticketCategory');
+         if (ticketCategory) {
+              const previous = ticketCategory.value || '';
+              ticketCategory.innerHTML = `<option value="">Select category…</option>${categoryOptions}`;
+              if (previous && categories.some(c => c.name === previous)) {
+                   ticketCategory.value = previous;
+              }
+         }
     },
 
     checkAuth: () => {
@@ -692,21 +715,25 @@ const UI = {
          UI.filterTickets('alltickets-page', 'all');
     },
 
-    // Category → unit mapping (mirrors tickets.js)
-    _CAT_TO_UNIT: {
-         'Network & WiFi': 'Network', 'Email': 'Network',
-         'Hardware': 'Hardware',
-         'Software': 'Software',
-         'Account & Access': 'Database',
-         'CBT / E-Learning': 'CBT',
-         'University Website': 'Web'
+    getCategoryUnitMap: () => {
+         return window.DataService.getCategories().reduce((map, category) => {
+              if (category?.name) {
+                   map[category.name] = category.unit || '';
+              }
+              return map;
+         }, {});
+    },
+
+    getCategoryUnit: (categoryName) => {
+         const map = UI.getCategoryUnitMap();
+         return map[categoryName] || '';
     },
 
     renderMyQueue: (user) => {
          const allTickets = window.TicketService.getAllTickets();
-         const unitCats = Object.entries(UI._CAT_TO_UNIT)
-              .filter(([, u]) => u === user.unit)
-              .map(([c]) => c);
+         const unitCats = window.DataService.getCategories()
+              .filter(cat => cat.unit === user.unit)
+              .map(cat => cat.name);
 
          const unitTickets = allTickets.filter(t =>
               (t.unit === user.unit || unitCats.includes(t.category)) &&
@@ -863,9 +890,9 @@ const UI = {
     renderMyTeam: (user) => {
          const allUsers   = window.DataService.getUsers();
          const allTickets = window.TicketService.getAllTickets();
-         const unitCats   = Object.entries(UI._CAT_TO_UNIT)
-              .filter(([, u]) => u === user.unit)
-              .map(([c]) => c);
+         const unitCats   = window.DataService.getCategories()
+              .filter(cat => cat.unit === user.unit)
+              .map(cat => cat.name);
 
          // Include tickets routed to this unit by dispatcher OR matching by category
          const unitTickets = allTickets.filter(t => t.unit === user.unit || unitCats.includes(t.category));
@@ -1197,7 +1224,7 @@ const UI = {
               const canRoute = user.role === 'dispatcher' && ticket.status === 'open';
               routeBox.style.display = canRoute ? 'block' : 'none';
               if (canRoute) {
-                   const suggestedUnit = UI._CAT_TO_UNIT[ticket.category] || '';
+                   const suggestedUnit = UI.getCategoryUnit(ticket.category);
                    const routeSelect = document.getElementById('routeUnitSelect');
                    if (routeSelect && suggestedUnit) routeSelect.value = suggestedUnit;
                    const routeNotes = document.getElementById('routeNotes');
@@ -1353,10 +1380,10 @@ const UI = {
          const cat = e.target.value;
          const subSelect = document.getElementById('ticketSubCategory');
          subSelect.innerHTML = '<option value="">Select Specific Issue</option>';
-         
-         if (cat && window.Utils.SUBCATEGORIES[cat]) {
-              window.Utils.SUBCATEGORIES[cat].forEach(sub => {
-                   subSelect.insertAdjacentHTML('beforeend', `<option value="${sub}">${sub}</option>`);
+         const subcategories = window.Utils.getCategorySubcategories(cat);
+         if (cat && subcategories.length) {
+              subcategories.forEach(sub => {
+                   subSelect.insertAdjacentHTML('beforeend', `<option value="${window.Utils.escapeHtml(sub)}">${window.Utils.escapeHtml(sub)}</option>`);
               });
               subSelect.disabled = false;
          } else {
@@ -1519,8 +1546,22 @@ const UI = {
          const currentUser = window.AuthService.getCurrentUser();
          const addStaffBtn = document.getElementById('addStaffBtn');
          if (addStaffBtn) {
-             addStaffBtn.style.display = (currentUser.role === 'admin' || currentUser.role === 'super-admin') ? 'inline-flex' : 'none';
+             addStaffBtn.style.display = (currentUser.role === 'admin' || currentUser.role === 'super-admin' || currentUser.role === 'unit-head') ? 'inline-flex' : 'none';
          }
+         
+         // Hide irrelevant role filter options for unit-heads
+         if (currentUser.role === 'unit-head') {
+              const roleFilter = document.getElementById('userRoleFilter');
+              if (roleFilter) {
+                   Array.from(roleFilter.options).forEach(opt => {
+                        if (['student', 'admin', 'super-admin', 'dispatcher', 'unit-head'].includes(opt.value)) {
+                             opt.style.display = 'none';
+                        }
+                   });
+                   roleFilter.value = 'all';
+              }
+         }
+         
          UI.filterUsers();
     },
 
@@ -1529,6 +1570,14 @@ const UI = {
          const query      = (document.getElementById('userSearchInput')?.value || '').toLowerCase();
          const roleFilter = document.getElementById('userRoleFilter')?.value || 'all';
          let users = window.DataService.getUsers();
+
+         // Unit-heads can only see staff/technicians under their unit
+         if (currentUser.role === 'unit-head') {
+              users = users.filter(u => 
+                   u.unit === currentUser.unit && 
+                   (u.role === 'staff' || u.role === 'technician')
+              );
+         }
 
          if (query) {
               users = users.filter(u =>
@@ -1560,18 +1609,26 @@ const UI = {
 
     buildUserCardHtml: (u, isPending, currentUser) => {
          const isSuperAdmin = currentUser && currentUser.role === 'super-admin';
+         const isUnitHead = currentUser && currentUser.role === 'unit-head';
          let actions = '';
 
          if (isPending) {
-             actions = `
-                 <button class="btn btn-sm btn-success" onclick="UI.approveUser('${u.id}')">Approve</button>
-                 <button class="btn btn-sm btn-danger" onclick="UI.rejectUser('${u.id}')">Reject</button>
-             `;
+             // Unit-heads cannot approve users
+             if (!isUnitHead) {
+                 actions = `
+                     <button class="btn btn-sm btn-success" onclick="UI.approveUser('${u.id}')">Approve</button>
+                     <button class="btn btn-sm btn-danger" onclick="UI.rejectUser('${u.id}')">Reject</button>
+                 `;
+             }
          } else {
              if (u.role === 'super-admin' && !isSuperAdmin) {
                  actions = '<span class="text-muted text-sm">Protected</span>';
+             } else if (u.role === 'admin' && !isSuperAdmin) {
+                 actions = '<span class="text-muted text-sm">Protected</span>';
              } else if (u.id === currentUser.id) {
                  actions = '<span class="text-muted text-sm">You</span>';
+             } else if (isUnitHead && u.unit !== currentUser.unit) {
+                 actions = '<span class="text-muted text-sm">Not your unit</span>';
              } else {
                  actions += u.status === 'suspended' ?
                      `<button class="btn btn-sm btn-success" onclick="UI.toggleUserSuspend('${u.id}', 'active')">Unsuspend</button>` :
@@ -1679,21 +1736,56 @@ const UI = {
          document.getElementById('addStaffModal').style.display = 'block';
          document.getElementById('addStaffOverlay').classList.add('open');
          document.getElementById('addStaffForm').reset();
+         
+         // If unit-head, lock unit field to their unit
+         const currentUser = window.AuthService.getCurrentUser();
+         const staffUnitSelect = document.getElementById('staffUnit');
+         const staffRoleSelect = document.getElementById('staffRole');
+         
+         if (currentUser.role === 'unit-head') {
+              staffUnitSelect.value = currentUser.unit || '';
+              staffUnitSelect.disabled = true;
+              // Limit role options for unit-heads
+              Array.from(staffRoleSelect.options).forEach(opt => {
+                   if (opt.value === 'admin' || opt.value === 'unit-head') {
+                        opt.style.display = 'none';
+                   } else {
+                        opt.style.display = '';
+                   }
+              });
+         } else {
+              staffUnitSelect.disabled = false;
+              Array.from(staffRoleSelect.options).forEach(opt => opt.style.display = '');
+         }
+         
          document.getElementById('addStaffForm').onsubmit = async (e) => {
               e.preventDefault();
               const btn = e.target.querySelector('button[type="submit"]');
               btn.disabled = true;
               try {
+                   const selectedUnit = document.getElementById('staffUnit').value || undefined;
+                   const selectedRole = document.getElementById('staffRole').value;
+                   
+                   // Validate unit-head can only create staff for their unit
+                   if (currentUser.role === 'unit-head') {
+                        if (selectedUnit && selectedUnit !== currentUser.unit) {
+                             throw new Error('You can only add staff to your own unit');
+                        }
+                        if (selectedRole === 'admin' || selectedRole === 'unit-head') {
+                             throw new Error('You cannot create admin or unit-head accounts');
+                        }
+                   }
+                   
                    await window.AuthService.adminCreateUser({
                         name: document.getElementById('staffName').value,
                         email: document.getElementById('staffEmail').value,
                         uid: document.getElementById('staffUid').value,
-                        role: document.getElementById('staffRole').value,
-                        unit: document.getElementById('staffUnit').value || undefined,
+                        role: selectedRole,
+                        unit: selectedUnit,
                         authPw: document.getElementById('staffPw').value
                    });
                    const creator = window.AuthService.getCurrentUser();
-                   window.DataService.logAction('create_user', creator.name, creator.id, document.getElementById('staffName').value, `Created ${document.getElementById('staffRole').value} account`);
+                   window.DataService.logAction('create_user', creator.name, creator.id, document.getElementById('staffName').value, `Created ${selectedRole} account`);
                    window.Utils.showToast('Created', 'Staff account created successfully.', 'success');
                    UI.closeAddStaffModal();
                    UI.renderUsersAdmin();
@@ -1726,7 +1818,125 @@ const UI = {
                 <div class="admin-stat-card"><div class="admin-stat-value">${tickets.length}</div><div class="admin-stat-label">Total Tickets</div></div>
             `;
         }
+        UI.renderCategoryAdmin();
         UI.filterAuditLog();
+    },
+
+    renderCategoryAdmin: () => {
+         const categories = window.DataService.getCategories();
+         const html = categories.length
+              ? `<table class="admin-table"><thead><tr><th>Category</th><th>Unit</th><th>Subcategories</th><th>Actions</th></tr></thead><tbody>${categories.map(cat => `
+                    <tr>
+                         <td>${window.Utils.escapeHtml(cat.name)}</td>
+                         <td>${window.Utils.escapeHtml(cat.unit || '—')}</td>
+                         <td>${window.Utils.escapeHtml((cat.subcategories || []).join(', '))}</td>
+                         <td>
+                              <button class="btn btn-xs" onclick="UI.openCategoryModal('${window.Utils.escapeHtml(cat.name).replace(/'/g, "\\'")}')">Edit</button>
+                              <button class="btn btn-xs btn-xs-danger" onclick="UI.deleteCategory('${window.Utils.escapeHtml(cat.name).replace(/'/g, "\\'")}')">Delete</button>
+                         </td>
+                    </tr>
+              `).join('')}</tbody></table>`
+              : '<div class="text-muted" style="padding:1rem;">No categories defined yet. Add one to start.</div>';
+         const container = document.getElementById('categoryAdminTable');
+         if (container) container.innerHTML = html;
+    },
+
+    openCategoryModal: (categoryName) => {
+         const overlay = document.getElementById('categoryModalOverlay');
+         const modal = document.getElementById('categoryModal');
+         if (!overlay || !modal) return;
+         const nameInput = document.getElementById('categoryName');
+         const unitInput = document.getElementById('categoryUnit');
+         const subsInput = document.getElementById('categorySubcategories');
+         const saveBtn = modal.querySelector('button[type="submit"]');
+         const title = document.getElementById('categoryModalTitle');
+
+         UI._editingCategoryName = null;
+         if (categoryName) {
+              const category = window.DataService.getCategoryByName(categoryName);
+              if (category) {
+                   title.textContent = 'Edit Category';
+                   nameInput.value = category.name;
+                   nameInput.disabled = true;
+                   UI._editingCategoryName = category.name;
+                   unitInput.value = category.unit || '';
+                   subsInput.value = (category.subcategories || []).join(', ');
+              }
+         } else {
+              title.textContent = 'Add Category';
+              nameInput.disabled = false;
+              nameInput.value = '';
+              unitInput.value = '';
+              subsInput.value = '';
+         }
+
+         overlay.classList.add('open');
+         modal.style.display = 'block';
+         const form = document.getElementById('categoryForm');
+         if (form) {
+              form.onsubmit = UI.saveCategory;
+         }
+    },
+
+    closeCategoryModal: () => {
+         document.getElementById('categoryModalOverlay')?.classList.remove('open');
+         const modal = document.getElementById('categoryModal');
+         if (modal) modal.style.display = 'none';
+    },
+
+    saveCategory: (e) => {
+         e.preventDefault();
+         const nameInput = document.getElementById('categoryName');
+         const unitInput = document.getElementById('categoryUnit');
+         const subsInput = document.getElementById('categorySubcategories');
+         const name = nameInput?.value?.trim();
+         const unit = unitInput?.value?.trim();
+         const subcategories = (subsInput?.value || '').split(',').map(s => s.trim()).filter(Boolean);
+
+         if (!name) {
+              window.Utils.showToast('Validation Error', 'Category name is required.', 'error');
+              return;
+         }
+         if (!unit) {
+              window.Utils.showToast('Validation Error', 'Unit is required for routing.', 'error');
+              return;
+         }
+
+         const existingName = UI._editingCategoryName;
+         if (existingName && existingName !== name) {
+              window.Utils.showToast('Error', 'Cannot rename category while it is in use.', 'error');
+              return;
+         }
+
+         const category = { name, unit, subcategories };
+         window.DataService.saveCategory(category);
+         const performer = window.AuthService.getCurrentUser();
+         if (existingName) {
+              window.DataService.logAction('update_category', performer.name, performer.id, name, `Updated unit and subcategories`);
+              window.Utils.showToast('Saved', 'Category updated successfully.', 'success');
+         } else {
+              window.DataService.logAction('create_category', performer.name, performer.id, name, `Created category for ${unit}`);
+              window.Utils.showToast('Saved', 'Category created successfully.', 'success');
+         }
+         UI.closeCategoryModal();
+         UI.renderCategoryAdmin();
+         UI.populateCategorySelects();
+    },
+
+    deleteCategory: (name) => {
+         if (!confirm(`Delete the category "${name}"? Tickets already using this category will keep their existing value but the category will no longer appear in lists.`)) return;
+         const tickets = window.DataService.getTickets();
+         const inUse = tickets.some(t => t.category === name);
+         if (inUse) {
+              window.Utils.showToast('Error', 'Cannot delete a category that is already used by tickets.', 'error');
+              return;
+         }
+         window.DataService.deleteCategory(name);
+         const performer = window.AuthService.getCurrentUser();
+         window.DataService.logAction('delete_category', performer.name, performer.id, name, `Deleted category`);
+         window.Utils.showToast('Deleted', 'Category removed.', 'success');
+         UI.renderCategoryAdmin();
+         UI.populateCategorySelects();
     },
 
     filterAuditLog: () => {
@@ -1838,10 +2048,11 @@ const UI = {
         }
 
         // Category bar chart
-        const cats    = ['Account & Access','Network & WiFi','Hardware','Software','CBT / E-Learning','University Website','Email','Other'];
-        const catLbls = ['Acct','WiFi','HW','SW','CBT','Web','Mail','Etc'];
-        const catClrs = ['#3B82F6','#06B6D4','#8B5CF6','#22C55E','#F59E0B','#EF4444','#EC4899','#6B7280'];
-        UI.drawBars('categoryChart', cats.map((c, i) => ({ label: catLbls[i], value: tickets.filter(t => t.category === c).length })), catClrs);
+        const categories = window.DataService.getCategories();
+        const cats = categories.map(c => c.name);
+        const catLbls = categories.map(c => c.name.split(' ').map(part => part[0]).join('').slice(0, 4));
+        const catClrs = ['#3B82F6','#06B6D4','#8B5CF6','#22C55E','#F59E0B','#EF4444','#EC4899','#6B7280','#14B8A6','#8B5CF6'];
+        UI.drawBars('categoryChart', cats.map((c, i) => ({ label: catLbls[i] || c, value: tickets.filter(t => t.category === c).length })), catClrs.slice(0, cats.length));
 
         // Avg resolution hours by priority
         const prios    = ['low','medium','high','critical'];
@@ -2089,6 +2300,7 @@ const UI = {
               const pageId = activePage.id;
               const currentFilter = document.querySelector(`#${pageId} .filter-btn.active`)?.dataset.filter || 'all';
               const allTickets = window.TicketService.getAllTickets();
+              const categoryUnits = UI.getCategoryUnitMap();
               if (pageId === 'mytickets-page') {
                    activePage._tickets = user.role === 'technician'
                         ? allTickets.filter(t => t.assignedId === user.id)
@@ -2097,12 +2309,12 @@ const UI = {
                    activePage._tickets = allTickets;
               } else if (pageId === 'myqueue-page') {
                    activePage._tickets = allTickets.filter(t => {
-                        const u = UI._CAT_TO_UNIT?.[t.category];
+                        const u = categoryUnits[t.category];
                         return (u === user.unit || t.assignedId === user.id) &&
                                (t.status === 'open' || t.status === 'in-progress');
                    });
               } else if (pageId === 'myteam-page') {
-                   activePage._tickets = allTickets.filter(t => UI._CAT_TO_UNIT?.[t.category] === user.unit);
+                   activePage._tickets = allTickets.filter(t => categoryUnits[t.category] === user.unit);
               } else if (pageId === 'dashboard-page') {
                    UI.renderDashboard(user); return;
               } else { return; }
@@ -2143,7 +2355,8 @@ const UI = {
               setCount(['navCountTriage', 'sidebarCountTriage'], unrouted);
          }
          if (user.role === 'technician') {
-              const unassigned = active.filter(t => !t.assignedId && UI._CAT_TO_UNIT?.[t.category] === user.unit).length;
+              const categoryUnits = UI.getCategoryUnitMap();
+              const unassigned = active.filter(t => !t.assignedId && categoryUnits[t.category] === user.unit).length;
               setCount(['navCountQueue', 'sidebarCountQueue'], unassigned);
          }
          if (user.role === 'admin' || user.role === 'super-admin' || user.role === 'unit-head') {

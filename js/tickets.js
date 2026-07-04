@@ -51,20 +51,10 @@ const TicketService = {
             window.DataService.saveTicket(ticket);
             
             const users = window.DataService.getUsers();
-
-            // Auto Routing Logic
-            const categoryToUnit = {
-                'Network & WiFi': 'Network',
-                'Hardware': 'Hardware',
-                'Software': 'Software',
-                'Account & Access': 'Database',
-                'CBT / E-Learning': 'CBT',
-                'University Website': 'Web',
-                'Email': 'Network'
-            };
-            
-            const targetUnit = categoryToUnit[ticketData.category];
+            const categoryMeta = window.DataService.getCategoryByName(ticketData.category);
+            const targetUnit = categoryMeta?.unit;
             if (targetUnit) {
+                 ticket.unit = targetUnit;
                  const unitHead = users.find(u => (u.role === 'unit-head' || u.role === 'technician') && u.unit === targetUnit);
                  if (unitHead) {
                       ticket.assignedId = unitHead.id;

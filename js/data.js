@@ -95,6 +95,49 @@ const SEED_TICKETS = [
     }
 ];
 
+const SEED_CATEGORIES = [
+    {
+        name: 'Account & Access',
+        unit: 'Database',
+        subcategories: ['Portal Login', 'Email Access', 'Password Reset', 'New Account Request']
+    },
+    {
+        name: 'Network & WiFi',
+        unit: 'Network',
+        subcategories: ['No Internet', 'Slow Connection', 'WiFi Not Showing', 'VPN Issues']
+    },
+    {
+        name: 'Hardware',
+        unit: 'Hardware',
+        subcategories: ['Computer Not Working', 'Printer Issue', 'Projector Fault', 'Mouse/Keyboard Problems']
+    },
+    {
+        name: 'Software',
+        unit: 'Software',
+        subcategories: ['Software Installation', 'System Crash', 'License Issue', 'Update Problem']
+    },
+    {
+        name: 'CBT / E-Learning',
+        unit: 'CBT',
+        subcategories: ['Exam Portal Error', 'Submission Failed', 'LMS Login Issues', 'Course Not Showing']
+    },
+    {
+        name: 'University Website',
+        unit: 'Web',
+        subcategories: ['Page Not Loading', 'Wrong Information', 'Form Not Working']
+    },
+    {
+        name: 'Email',
+        unit: 'Network',
+        subcategories: ['Email Setup', 'Cannot Send', 'Cannot Receive', 'Spam Issues']
+    },
+    {
+        name: 'Other',
+        unit: 'Helpdesk',
+        subcategories: ['Miscellaneous issues']
+    }
+];
+
 // Initialize if empty
 let currentUsers = DemoDB.get('users', null);
 if (!currentUsers) {
@@ -110,6 +153,22 @@ if (!currentUsers) {
         }
     });
     if (changed) DemoDB.set('users', currentUsers);
+}
+
+let currentCategories = DemoDB.get('categories', null);
+if (!currentCategories) {
+    DemoDB.set('categories', SEED_CATEGORIES);
+} else {
+    // Ensure seed categories are present when demo storage exists
+    const existingNames = currentCategories.map(c => c.name);
+    let added = false;
+    SEED_CATEGORIES.forEach(seed => {
+        if (!existingNames.includes(seed.name)) {
+            currentCategories.push(seed);
+            added = true;
+        }
+    });
+    if (added) DemoDB.set('categories', currentCategories);
 }
 
 if (!DemoDB.get('tickets', null)) {
@@ -194,6 +253,24 @@ const DataService = {
     },
 
     getAuditLog: () => DemoDB.get('audit_log', []),
+
+    getCategories: () => DemoDB.get('categories', []),
+    saveCategory: (category) => {
+         let categories = DataService.getCategories();
+         const idx = categories.findIndex(c => c.name === category.name);
+         if (idx >= 0) categories[idx] = category;
+         else categories.push(category);
+         DemoDB.set('categories', categories);
+         return category;
+    },
+    deleteCategory: (name) => {
+         let categories = DataService.getCategories();
+         categories = categories.filter(c => c.name !== name);
+         DemoDB.set('categories', categories);
+    },
+    getCategoryByName: (name) => {
+         return DataService.getCategories().find(c => c.name === name);
+    },
 
     logAction: (action, performedBy, performedById, target, detail) => {
         const log = DataService.getAuditLog();
