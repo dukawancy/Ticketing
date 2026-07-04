@@ -39,6 +39,9 @@ const UI = {
         
         const registerForm = document.getElementById('registerForm');
         if (registerForm) registerForm.addEventListener('submit', UI.handleRegister);
+
+        const guestEnquiryForm = document.getElementById('guestEnquiryForm');
+        if (guestEnquiryForm) guestEnquiryForm.addEventListener('submit', UI.handleGuestEnquiry);
         
         // Navigation Switcher (Top & Mobile)
         document.querySelectorAll('.nav-tab, .mobile-nav-item').forEach(el => {
@@ -183,6 +186,64 @@ const UI = {
         } finally {
             btn.innerHTML = origText;
             btn.disabled = false;
+        }
+    },
+
+    handleGuestEnquiry: async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('guestName').value.trim();
+        const email = document.getElementById('guestEmail').value.trim();
+        const subject = document.getElementById('guestSubject').value.trim();
+        const description = document.getElementById('guestDescription').value.trim();
+        const contact = document.getElementById('guestContact').value.trim();
+        const existingTicketId = document.getElementById('guestExistingTicketId')?.value?.trim();
+
+        if (!name || !email || !subject || !description) {
+            window.Utils.showToast('Error', 'Please complete all required enquiry fields.', 'error');
+            return;
+        }
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        const origText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = 'Submitting...';
+
+        try {
+            if (existingTicketId) {
+                const updated = window.TicketService.addGuestReply(existingTicketId, email, description, name);
+                if (updated) {
+                    window.Utils.showToast('Success', `Your message was added to ticket ${updated.id}.`, 'success');
+                    e.target.reset();
+                    document.getElementById('guestExistingTicketId').value = '';
+                    UI.showAuthPage('login-view');
+                    return;
+                }
+                window.Utils.showToast('Error', 'The requested ticket could not be found.', 'error');
+                return;
+            }
+
+            const ticketData = {
+                title: subject,
+                category: 'Enquiry',
+                subCategory: 'General Enquiry',
+                priority: 'low',
+                location: contact,
+                description,
+                guestName: name,
+                guestEmail: email,
+                guestContact: contact
+            };
+
+            const ticket = await window.TicketService.submitTicket(ticketData);
+            window.Utils.showToast('Success', `Enquiry submitted as ${ticket.id}. We will send an email update when it is resolved.`, 'success');
+            e.target.reset();
+            UI.showAuthPage('login-view');
+        } catch(err) {
+            window.Utils.showToast('Error', err.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = origText;
         }
     },
 
@@ -1070,6 +1131,19 @@ const UI = {
          }
 
          document.getElementById('detailDescription').textContent = ticket.description;
+
+         const replyEmailField = document.getElementById('detailReplyEmailField');
+         const replyEmailEl = document.getElementById('detailReplyEmail');
+         if (replyEmailField && replyEmailEl) {
+              const contactEmail = ticket.guestEmail || ticket.contactEmail || ticket.replyEmail || ticket.submittedByEmail || '';
+              const shouldShowReplyEmail = Boolean(contactEmail) && (ticket.status === 'resolved' || ticket.status === 'closed');
+              if (shouldShowReplyEmail) {
+                   replyEmailEl.innerHTML = `<a href="mailto:${contactEmail}" class="ticket-id-copy" style="font-size:0.875rem;">${window.Utils.escapeHtml(contactEmail)}</a>`;
+                   replyEmailField.style.display = '';
+              } else {
+                   replyEmailField.style.display = 'none';
+              }
+         }
 
          // SLA deadline
          const slaValEl = document.getElementById('detailSlaValue');

@@ -87,6 +87,30 @@ const NotificationService = {
              NotificationService.createNotification(ticket.assignedId, 'status-change', title, msg, ticket.id);
         }
     },
+
+    // Open user's mail client prefilled with a resolution message for guest submitters.
+    sendResolveEmail: (ticket) => {
+        try {
+            const to = ticket.guestEmail || ticket.contactEmail || ticket.submittedByEmail || '';
+            if (!to) return;
+            const subject = encodeURIComponent(`Response to your enquiry ${ticket.id}`);
+            const bodyLines = [];
+            bodyLines.push(`Hello ${ticket.guestName || ticket.submittedBy || ''},`);
+            bodyLines.push('');
+            bodyLines.push(`Your enquiry (${ticket.id}) has been marked as resolved.`);
+            if (ticket.assignedTo) bodyLines.push(`Handled by: ${ticket.assignedTo}`);
+            bodyLines.push('');
+            bodyLines.push('Resolution details:');
+            bodyLines.push(ticket.comments && ticket.comments.length ? ticket.comments.slice(-1)[0].text : ticket.description || 'Please see the ticket for details.');
+            bodyLines.push('');
+            bodyLines.push('If you need further help, reply to this message or visit the support portal.');
+            const body = encodeURIComponent(bodyLines.join('\n'));
+            // Open the user's default mail client with prefilled fields so staff can send the email.
+            window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+        } catch (e) {
+            console.warn('sendResolveEmail failed', e);
+        }
+    },
     
     notifyNewComment: (ticket, comment) => {
          const title = 'New Comment';

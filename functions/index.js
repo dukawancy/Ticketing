@@ -28,39 +28,52 @@ exports.notifyOnStatusChange = functions.firestore
         }
       };
       
-      // Notify submitter via Push
+      // Notify submitter via Push or email
       const submitter = await db.collection('users').doc(newData.submittedById).get();
-      
+      let submitterEmail = null;
+      let submitterName = null;
+      let hasValidUser = false;
+
       if (submitter.exists) {
-         if (submitter.data().notificationToken) {
+         const submitterData = submitter.data();
+         submitterEmail = submitterData.email;
+         submitterName = submitterData.name;
+         hasValidUser = true;
+
+         if (submitterData.notificationToken) {
            await admin.messaging().sendToDevice(
-             submitter.data().notificationToken,
+             submitterData.notificationToken,
              message
            );
          }
-         
-         // 2. Transactional Email on Status Change
-         if (['resolved', 'closed', 'in-progress'].includes(newData.status)) {
-             await sendEmail(
-                 submitter.data().email, 
-                 `Your Ticket ${newData.id} is now ${newData.status}`, 
-                 `<p>Hello ${submitter.data().name},</p><p>Your ticket has been updated to <strong>${newData.status}</strong>.</p>`
-             );
-         }
+      } else if (newData.guestEmail) {
+         submitterEmail = newData.guestEmail;
+         submitterName = newData.guestName || 'Guest';
       }
-      
-      // Create notification record
-      await db.collection('notifications')
-        .doc(newData.submittedById)
-        .collection('items')
-        .add({
-          type: 'status-change',
-          title: 'Ticket Status Updated',
-          message: `Ticket ${newData.id}: Status changed to ${newData.status}`,
-          ticketId: newData.id,
-          read: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+
+      // 2. Transactional Email on Status Change
+      if (submitterEmail && ['resolved', 'closed', 'in-progress'].includes(newData.status)) {
+           await sendEmail(
+               submitterEmail,
+               `Your Ticket ${newData.id} is now ${newData.status}`,
+               `<p>Hello ${submitterName || 'there'},</p><p>Your ticket has been updated to <strong>${newData.status}</strong>.</p>`
+           );
+      }
+
+      // Create notification record only for registered user
+      if (hasValidUser) {
+        await db.collection('notifications')
+          .doc(newData.submittedById)
+          .collection('items')
+          .add({
+            type: 'status-change',
+            title: 'Ticket Status Updated',
+            message: `Ticket ${newData.id}: Status changed to ${newData.status}`,
+            ticketId: newData.id,
+            read: false,
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+          });
+      }
     }
   });
 

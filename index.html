@@ -57,6 +57,9 @@
                 <div class="auth-footer">
                     New user? <a onclick="UI.showAuthPage('register-view')">Create an account</a>
                 </div>
+                <div class="auth-footer">
+                    Not a student? <a onclick="UI.showAuthPage('guest-enquiry-view')">Submit an enquiry</a>
+                </div>
 
                 <!-- Demo credentials -->
                 <div style="margin-top:1.75rem; padding:1rem 1.1rem; background:var(--surface2); border:1px solid var(--border-md); border-radius:var(--radius-sm); font-size:0.75rem; color:var(--text-muted); line-height:1.8;">
@@ -70,6 +73,55 @@
                         <div><span style="color:var(--info);">Unit Head :</span> fatima@unijos.edu.ng / ICT@2026</div>
                         <div><span style="color:var(--danger);">Admin     :</span> admin@unijos.edu.ng / admin123</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GUEST ENQUIRY -->
+        <div id="guest-enquiry-view" class="auth-page">
+            <div class="auth-card">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon" aria-hidden="true" style="background: none; box-shadow: none;">
+                        <img src="./images/unijos-logo.jpg" alt="University of Jos Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
+                    </div>
+                    <div class="auth-logo-text">
+                        <h1>UNIJOS ICT</h1>
+                        <p>Guest Enquiry</p>
+                    </div>
+                </div>
+                <h2 class="auth-title">Submit an Enquiry</h2>
+                <p class="auth-subtitle">Open an enquiry without logging in. We'll email you when it is updated.</p>
+
+                <form id="guestEnquiryForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="guestName" class="form-control" placeholder="Your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="guestEmail" class="form-control" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" id="guestSubject" class="form-control" placeholder="Brief summary of your enquiry" required minlength="5" maxlength="120">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="guestDescription" class="form-control" placeholder="Tell us about your enquiry so we can help quickly..." required minlength="20" maxlength="2000"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contact Phone (optional)</label>
+                        <input type="text" id="guestContact" class="form-control" placeholder="Optional phone number">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Existing Ticket ID (optional)</label>
+                        <input type="text" id="guestExistingTicketId" class="form-control" placeholder="e.g. TKT-2026-0001">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full" style="justify-content:center; padding:0.75rem;">Submit Enquiry</button>
+                </form>
+
+                <div class="auth-footer mt-2">
+                    <button class="btn btn-ghost" onclick="UI.showAuthPage('login-view')">Back to Sign In</button>
                 </div>
             </div>
         </div>
@@ -864,6 +916,10 @@
                             <div class="detail-field">
                                 <div class="detail-field-label">Assigned To</div>
                                 <div class="detail-field-value fw-600" id="detailAssigned"></div>
+                            </div>
+                            <div class="detail-field" id="detailReplyEmailField" style="display:none;">
+                                <div class="detail-field-label">Reply Email</div>
+                                <div class="detail-field-value" id="detailReplyEmail"></div>
                             </div>
                             <hr class="sep">
                             <div class="detail-field" id="detailSlaField">

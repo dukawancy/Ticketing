@@ -24,20 +24,30 @@ const TicketService = {
     },
 
     submitTicket: (ticketData) => {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const user = window.AuthService.getCurrentUser();
             const now = new Date().toISOString();
+            const isGuest = !user;
+            const submitterId = isGuest ? `guest_${Math.random().toString(36).substr(2, 9)}` : user.id;
+            const submitterName = isGuest ? (ticketData.guestName || 'Guest User') : user.name;
             const ticket = {
                 id: TicketService.generateId(),
                 status: 'open',
-                submittedById: user.id,
-                submittedBy: user.name,
+                submittedById: submitterId,
+                submittedBy: submitterName,
                 comments: [],
                 createdAt: now,
                 updatedAt: now,
                 ...ticketData
             };
             
+            if (isGuest) {
+                if (!ticket.guestEmail) {
+                    reject(new Error('Guest enquiry must include an email address.'));
+                    return;
+                }
+            }
+
             window.DataService.saveTicket(ticket);
             
             const users = window.DataService.getUsers();
@@ -71,7 +81,9 @@ const TicketService = {
                  window.DataService.saveTicket(ticket);
             }
 
-            window.DataService.logAction('create_ticket', user.name, user.id, ticket.id, `${ticket.category} — ${ticket.priority} priority`);
+            const performerName = user ? user.name : ticket.submittedBy;
+            const performerId = user ? user.id : ticket.submittedById;
+            window.DataService.logAction('create_ticket', performerName, performerId, ticket.id, `${ticket.category} — ${ticket.priority} priority`);
 
             // Notify admins
             const admins = users.filter(u => u.role === 'admin');
@@ -138,7 +150,13 @@ const TicketService = {
                   time: new Date().toISOString()
               });
               window.DataService.saveTicket(ticket);
-              window.NotificationService.notifyStatusChange(ticket, oldStatus, newStatus);
+                 window.NotificationService.notifyStatusChange(ticket, oldStatus, newStatus);
+                 // If resolved and a guest/non-student provided an email, open mail client to send resolution
+                 if (newStatus === 'resolved' && (ticket.guestEmail || ticket.contactEmail || ticket.submittedByEmail)) {
+                      if (window.NotificationService && typeof window.NotificationService.sendResolveEmail === 'function') {
+                           window.NotificationService.sendResolveEmail(ticket);
+                      }
+                 }
               if (performer) window.DataService.logAction('update_status', performer.name, performer.id, ticket.id, `${oldStatus} → ${newStatus}`);
               return ticket;
          }
@@ -170,6 +188,29 @@ const TicketService = {
               return ticket;
          }
          return null;
+    },
+
+    addGuestReply: (ticketId, guestEmail, text, guestName) => {
+         const ticket = TicketService.getTicketById(ticketId);
+         if (!ticket) return null;
+
+         const comment = {
+              id: 'c_' + Math.random().toString(36).substr(2, 9),
+              author: guestName || ticket.guestName || 'Guest User',
+              authorId: ticket.submittedById || `guest_${Math.random().toString(36).substr(2, 9)}`,
+              authorRole: 'guest',
+              text,
+              time: new Date().toISOString(),
+              isInternal: false
+         };
+
+         ticket.guestEmail = guestEmail || ticket.guestEmail;
+         ticket.guestName = guestName || ticket.guestName;
+         ticket.comments.push(comment);
+         ticket.updatedAt = new Date().toISOString();
+         window.DataService.saveTicket(ticket);
+         window.NotificationService.notifyNewComment(ticket, comment);
+         return ticket;
     },
     
     editTicket: (ticketId, data) => {
