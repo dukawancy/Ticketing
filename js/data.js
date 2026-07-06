@@ -95,6 +95,26 @@ const SEED_TICKETS = [
     }
 ];
 
+const SEED_ROLES = [
+    { id: 'role_student', name: 'Student', description: 'Can submit and track tickets', permissions: ['submit_ticket', 'view_own_tickets'] },
+    { id: 'role_staff', name: 'Staff', description: 'University staff member', permissions: ['submit_ticket', 'view_own_tickets'] },
+    { id: 'role_technician', name: 'Technician', description: 'Can resolve technical issues', permissions: ['assign_ticket', 'update_ticket', 'add_internal_notes', 'view_all_tickets'] },
+    { id: 'role_unit_head', name: 'Unit Head', description: 'Manages a unit and assigns tickets', permissions: ['assign_ticket', 'view_unit_tickets', 'manage_technicians', 'view_metrics'] },
+    { id: 'role_dispatcher', name: 'Dispatcher', description: 'Routes and dispatches tickets', permissions: ['assign_ticket', 'view_all_tickets', 'manage_routing'] },
+    { id: 'role_admin', name: 'Admin', description: 'System administrator', permissions: ['manage_users', 'manage_config', 'view_audit', 'manage_roles', 'manage_units'] },
+    { id: 'role_super_admin', name: 'Super Admin', description: 'Full system access', permissions: ['all'] }
+];
+
+const SEED_UNITS = [
+    { id: 'unit_network', name: 'Network', description: 'Network infrastructure and connectivity', head: null, technicians: [], color: '#3b82f6' },
+    { id: 'unit_hardware', name: 'Hardware', description: 'Hardware repairs and maintenance', head: null, technicians: [], color: '#ef4444' },
+    { id: 'unit_database', name: 'Database', description: 'Database administration and access', head: null, technicians: [], color: '#8b5cf6' },
+    { id: 'unit_software', name: 'Software', description: 'Software installation and support', head: null, technicians: [], color: '#ec4899' },
+    { id: 'unit_cbt', name: 'CBT/E-Learning', description: 'Computer-based testing and LMS', head: null, technicians: [], color: '#f59e0b' },
+    { id: 'unit_web', name: 'Web Services', description: 'Website and web application support', head: null, technicians: [], color: '#10b981' },
+    { id: 'unit_helpdesk', name: 'Helpdesk', description: 'General support and miscellaneous', head: null, technicians: [], color: '#6366f1' }
+];
+
 const SEED_CATEGORIES = [
     {
         name: 'Account & Access',
@@ -137,6 +157,38 @@ const SEED_CATEGORIES = [
         subcategories: ['Miscellaneous issues']
     }
 ];
+
+let currentRoles = DemoDB.get('roles', null);
+if (!currentRoles) {
+    DemoDB.set('roles', SEED_ROLES);
+} else {
+    // Ensure seed roles exist
+    const existingIds = currentRoles.map(r => r.id);
+    let added = false;
+    SEED_ROLES.forEach(seed => {
+        if (!existingIds.includes(seed.id)) {
+            currentRoles.push(seed);
+            added = true;
+        }
+    });
+    if (added) DemoDB.set('roles', currentRoles);
+}
+
+let currentUnits = DemoDB.get('units', null);
+if (!currentUnits) {
+    DemoDB.set('units', SEED_UNITS);
+} else {
+    // Ensure seed units exist
+    const existingIds = currentUnits.map(u => u.id);
+    let added = false;
+    SEED_UNITS.forEach(seed => {
+        if (!existingIds.includes(seed.id)) {
+            currentUnits.push(seed);
+            added = true;
+        }
+    });
+    if (added) DemoDB.set('units', currentUnits);
+}
 
 // Initialize if empty
 let currentUsers = DemoDB.get('users', null);
@@ -284,7 +336,59 @@ const DataService = {
             time: new Date().toISOString()
         });
         DemoDB.set('audit_log', log.slice(0, 500));
+    },
+
+    // ===== ROLES MANAGEMENT =====
+    getRoles: () => DemoDB.get('roles', []),
+    saveRole: (role) => {
+        let roles = DataService.getRoles();
+        const idx = roles.findIndex(r => r.id === role.id);
+        if (idx >= 0) {
+            roles[idx] = role;
+        } else {
+            if (!role.id) role.id = 'role_' + Math.random().toString(36).substr(2, 9);
+            roles.push(role);
+        }
+        DemoDB.set('roles', roles);
+        return role;
+    },
+    deleteRole: (roleId) => {
+        let roles = DataService.getRoles();
+        roles = roles.filter(r => r.id !== roleId);
+        DemoDB.set('roles', roles);
+    },
+    getRoleById: (id) => {
+        return DataService.getRoles().find(r => r.id === id);
+    },
+
+    // ===== UNITS MANAGEMENT =====
+    getUnits: () => DemoDB.get('units', []),
+    saveUnit: (unit) => {
+        let units = DataService.getUnits();
+        const idx = units.findIndex(u => u.id === unit.id);
+        if (idx >= 0) {
+            units[idx] = unit;
+        } else {
+            if (!unit.id) unit.id = 'unit_' + Math.random().toString(36).substr(2, 9);
+            if (!unit.technicians) unit.technicians = [];
+            if (!unit.color) unit.color = '#6366f1';
+            units.push(unit);
+        }
+        DemoDB.set('units', units);
+        return unit;
+    },
+    deleteUnit: (unitId) => {
+        let units = DataService.getUnits();
+        units = units.filter(u => u.id !== unitId);
+        DemoDB.set('units', units);
+    },
+    getUnitById: (id) => {
+        return DataService.getUnits().find(u => u.id === id);
+    },
+    getUnitByName: (name) => {
+        return DataService.getUnits().find(u => u.name === name);
     }
+
 };
 
 window.DataService = DataService;

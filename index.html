@@ -256,6 +256,8 @@
                 <button class="nav-tab" data-target="newticket-page" data-roles="student,staff,technician">New Ticket</button>
                 <button class="nav-tab" data-target="users-page" data-roles="unit-head,admin,super-admin">Users</button>
                 <button class="nav-tab" data-target="admin-page" data-roles="admin,super-admin">Admin Console</button>
+                <button class="nav-tab" data-target="roles-page" data-roles="admin,super-admin">Roles</button>
+                <button class="nav-tab" data-target="units-page" data-roles="admin,super-admin">Units</button>
                 <button class="nav-tab" data-target="reports-page" data-roles="unit-head,admin,super-admin">Reports</button>
             </nav>
 
@@ -342,6 +344,20 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </span>
                     <span class="sidebar-item-label">Admin Console</span>
+                </button>
+
+                <button class="nav-tab sidebar-item" data-target="roles-page" data-roles="admin,super-admin">
+                    <span class="sidebar-item-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c6.6 0 12 5.4 12 12s-5.4 12-12 12S0 20.6 0 14 5.4 2 12 2z"/><circle cx="12" cy="10" r="2.5"/><path d="M8 16c0-1.7 1.8-3 4-3s4 1.3 4 3"/></svg>
+                    </span>
+                    <span class="sidebar-item-label">Manage Roles</span>
+                </button>
+
+                <button class="nav-tab sidebar-item" data-target="units-page" data-roles="admin,super-admin">
+                    <span class="sidebar-item-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </span>
+                    <span class="sidebar-item-label">Manage Units</span>
                 </button>
 
                 <button class="nav-tab sidebar-item" data-target="reports-page" data-roles="unit-head,admin,super-admin">
@@ -1076,8 +1092,65 @@
                 </div>
             </div>
 
+            <!-- 7b. ROLES MANAGEMENT PAGE -->
+            <div id="roles-page" class="page">
+                <div class="page-header-row">
+                    <div>
+                        <h1>Manage Roles</h1>
+                        <p>Create, edit, and delete user roles with permissions.</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="UI.openRoleModal()">Add Role</button>
+                </div>
 
-            <!-- 8. REPORTS PAGE -->
+                <div class="card">
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Permissions</th>
+                                    <th style="text-align:right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rolesTableBody">
+                                <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:2rem;">Loading roles…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7c. UNITS MANAGEMENT PAGE -->
+            <div id="units-page" class="page">
+                <div class="page-header-row">
+                    <div>
+                        <h1>Manage Units</h1>
+                        <p>Create, edit, and delete ICT units and departments.</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="UI.openUnitModal()">Add Unit</button>
+                </div>
+
+                <div class="card">
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Unit Head</th>
+                                    <th>Technicians</th>
+                                    <th style="text-align:right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="unitsTableBody">
+                                <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:2rem;">Loading units…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <div id="reports-page" class="page">
                 <div class="page-header">
                     <div>
@@ -1422,6 +1495,94 @@
             <div class="d-flex" style="justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
                 <button type="button" class="btn btn-ghost" onclick="UI.closeCategoryModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Category</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ROLE MANAGEMENT MODAL -->
+    <div id="roleModalOverlay" class="notif-overlay" onclick="UI.closeRoleModal()"></div>
+    <div id="roleModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1002; background:var(--surface); border:1px solid var(--border-md); border-radius:var(--radius-lg); padding:2rem; width:min(520px,92vw); max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-xl);">
+        <h3 id="roleModalTitle" style="margin-bottom:1.5rem; letter-spacing:-0.02em;">Add Role</h3>
+        <form id="roleForm" onsubmit="UI.saveRole(event)">
+            <div class="form-group">
+                <label class="form-label">Role Name <span class="required">*</span></label>
+                <input type="text" id="roleName" class="form-control" placeholder="e.g. Support Manager" required maxlength="80">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description <span class="required">*</span></label>
+                <textarea id="roleDescription" class="form-control" placeholder="Describe the purpose of this role" required style="min-height:60px; resize:vertical;"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Permissions <span style="color:var(--text-dim); font-weight:400">(select applicable)</span></label>
+                <div style="display:grid; gap:0.5rem;">
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="submit_ticket" class="rolePermission"> Can Submit Tickets
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="view_own_tickets" class="rolePermission"> View Own Tickets
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="view_all_tickets" class="rolePermission"> View All Tickets
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="assign_ticket" class="rolePermission"> Assign Tickets
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="update_ticket" class="rolePermission"> Update Tickets
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="add_internal_notes" class="rolePermission"> Add Internal Notes
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="manage_technicians" class="rolePermission"> Manage Technicians
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="manage_users" class="rolePermission"> Manage Users
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="manage_config" class="rolePermission"> Manage Configuration
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="view_audit" class="rolePermission"> View Audit Log
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
+                        <input type="checkbox" name="permission" value="view_metrics" class="rolePermission"> View Metrics
+                    </label>
+                </div>
+            </div>
+            <div class="d-flex" style="justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+                <button type="button" class="btn btn-ghost" onclick="UI.closeRoleModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Role</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- UNIT MANAGEMENT MODAL -->
+    <div id="unitModalOverlay" class="notif-overlay" onclick="UI.closeUnitModal()"></div>
+    <div id="unitModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1002; background:var(--surface); border:1px solid var(--border-md); border-radius:var(--radius-lg); padding:2rem; width:min(520px,92vw); box-shadow:var(--shadow-xl);">
+        <h3 id="unitModalTitle" style="margin-bottom:1.5rem; letter-spacing:-0.02em;">Add Unit</h3>
+        <form id="unitForm" onsubmit="UI.saveUnit(event)">
+            <div class="form-group">
+                <label class="form-label">Unit Name <span class="required">*</span></label>
+                <input type="text" id="unitName" class="form-control" placeholder="e.g. Network Services" required maxlength="80">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description <span class="required">*</span></label>
+                <textarea id="unitDescription" class="form-control" placeholder="Describe the unit's responsibilities" required style="min-height:60px; resize:vertical;"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Color Code <span style="color:var(--text-dim); font-weight:400">(for UI identification)</span></label>
+                <input type="color" id="unitColor" class="form-control" value="#6366f1">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Unit Head</label>
+                <select id="unitHead" class="form-control">
+                    <option value="">Unassigned</option>
+                </select>
+            </div>
+            <div class="d-flex" style="justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+                <button type="button" class="btn btn-ghost" onclick="UI.closeUnitModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Unit</button>
             </div>
         </form>
     </div>

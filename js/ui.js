@@ -345,6 +345,8 @@ const UI = {
             case 'myteam-page':      UI.renderMyTeam(user); break;
             case 'users-page':       UI.renderUsersAdmin(); break;
             case 'admin-page':       UI.renderAdminConsole(); break;
+            case 'roles-page':       UI.renderRoles(); break;
+            case 'units-page':       UI.renderUnits(); break;
             case 'reports-page':     UI.renderReports(); break;
         }
     },
@@ -2692,7 +2694,253 @@ const UI = {
               counter.textContent = `${count} characters`;
               counter.style.color = '';
          }
+    },
+
+    // ===== ROLES MANAGEMENT =====
+    renderRoles: () => {
+        const roles = window.DataService.getRoles();
+        const tbody = document.getElementById('rolesTableBody');
+        if (!tbody) return;
+        
+        if (!roles.length) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:2rem;">No roles found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = roles.map(role => {
+            const perms = (role.permissions || []).slice(0, 3).join(', ');
+            const showMore = role.permissions?.length > 3 ? ` +${role.permissions.length - 3} more` : '';
+            return `
+                <tr>
+                    <td><strong>${role.name}</strong></td>
+                    <td><span style="color:var(--text-dim);">${role.description || '—'}</span></td>
+                    <td><span style="font-size:0.8rem; color:var(--text-muted);">${perms}${showMore}</span></td>
+                    <td style="text-align:right;">
+                        <button class="btn btn-icon btn-sm" onclick="UI.editRole('${role.id}')" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        ${role.id.startsWith('role_') ? `<button class="btn btn-icon btn-sm" onclick="UI.deleteRole('${role.id}')" title="Delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </button>` : ''}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    },
+
+    openRoleModal: (roleId = null) => {
+        document.getElementById('roleForm').reset();
+        const modal = document.getElementById('roleModal');
+        const title = document.getElementById('roleModalTitle');
+        UI._editingRoleId = roleId;
+
+        if (roleId) {
+            const role = window.DataService.getRoleById(roleId);
+            if (role) {
+                document.getElementById('roleName').value = role.name;
+                document.getElementById('roleDescription').value = role.description || '';
+                
+                // Set permissions checkboxes
+                document.querySelectorAll('.rolePermission').forEach(cb => {
+                    cb.checked = (role.permissions || []).includes(cb.value);
+                });
+                
+                title.textContent = 'Edit Role';
+            }
+        } else {
+            title.textContent = 'Add Role';
+        }
+
+        modal.style.display = 'block';
+        document.getElementById('roleModalOverlay').classList.add('open');
+    },
+
+    closeRoleModal: () => {
+        document.getElementById('roleModal').style.display = 'none';
+        document.getElementById('roleModalOverlay').classList.remove('open');
+        UI._editingRoleId = null;
+    },
+
+    saveRole: (e) => {
+        e.preventDefault();
+        const name = document.getElementById('roleName')?.value?.trim();
+        const description = document.getElementById('roleDescription')?.value?.trim();
+        const permissions = Array.from(document.querySelectorAll('.rolePermission:checked')).map(cb => cb.value);
+
+        if (!name) {
+            window.Utils.showToast('Validation Error', 'Role name is required.', 'error');
+            return;
+        }
+
+        const role = {
+            id: UI._editingRoleId || 'role_' + Math.random().toString(36).substr(2, 9),
+            name,
+            description,
+            permissions
+        };
+
+        window.DataService.saveRole(role);
+        const performer = window.AuthService.getCurrentUser();
+        
+        if (UI._editingRoleId) {
+            window.DataService.logAction('update_role', performer.name, performer.id, name, `Updated role permissions`);
+            window.Utils.showToast('Saved', 'Role updated successfully.', 'success');
+        } else {
+            window.DataService.logAction('create_role', performer.name, performer.id, name, `Created role with ${permissions.length} permissions`);
+            window.Utils.showToast('Created', 'Role created successfully.', 'success');
+        }
+
+        UI.closeRoleModal();
+        UI.renderRoles();
+    },
+
+    editRole: (roleId) => {
+        UI.openRoleModal(roleId);
+    },
+
+    deleteRole: (roleId) => {
+        const role = window.DataService.getRoleById(roleId);
+        if (!role) return;
+        
+        if (!confirm(`Delete the role "${role.name}"?`)) return;
+        
+        window.DataService.deleteRole(roleId);
+        const performer = window.AuthService.getCurrentUser();
+        window.DataService.logAction('delete_role', performer.name, performer.id, role.name, `Deleted role`);
+        window.Utils.showToast('Deleted', 'Role removed.', 'success');
+        UI.renderRoles();
+    },
+
+    // ===== UNITS MANAGEMENT =====
+    renderUnits: () => {
+        const units = window.DataService.getUnits();
+        const tbody = document.getElementById('unitsTableBody');
+        if (!tbody) return;
+        
+        if (!units.length) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:2rem;">No units found.</td></tr>`;
+            return;
+        }
+
+        const users = window.DataService.getUsers();
+        
+        tbody.innerHTML = units.map(unit => {
+            const head = unit.head ? users.find(u => u.id === unit.head)?.name : '—';
+            const techCount = (unit.technicians || []).length;
+            return `
+                <tr>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <span style="width:12px; height:12px; background:${unit.color || '#6366f1'}; border-radius:50%;"></span>
+                            <strong>${unit.name}</strong>
+                        </div>
+                    </td>
+                    <td><span style="color:var(--text-dim);">${unit.description || '—'}</span></td>
+                    <td><span style="font-size:0.85rem;">${head}</span></td>
+                    <td><span style="font-size:0.85rem;">${techCount} technician${techCount !== 1 ? 's' : ''}</span></td>
+                    <td style="text-align:right;">
+                        <button class="btn btn-icon btn-sm" onclick="UI.editUnit('${unit.id}')" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="btn btn-icon btn-sm" onclick="UI.deleteUnit('${unit.id}')" title="Delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    },
+
+    openUnitModal: (unitId = null) => {
+        document.getElementById('unitForm').reset();
+        const modal = document.getElementById('unitModal');
+        const title = document.getElementById('unitModalTitle');
+        UI._editingUnitId = unitId;
+
+        // Populate unit head dropdown
+        const users = window.DataService.getUsers();
+        const unitHeads = users.filter(u => u.role === 'unit-head' || u.role === 'admin');
+        const headSelect = document.getElementById('unitHead');
+        headSelect.innerHTML = '<option value="">Unassigned</option>' +
+            unitHeads.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+
+        if (unitId) {
+            const unit = window.DataService.getUnitById(unitId);
+            if (unit) {
+                document.getElementById('unitName').value = unit.name;
+                document.getElementById('unitDescription').value = unit.description || '';
+                document.getElementById('unitColor').value = unit.color || '#6366f1';
+                document.getElementById('unitHead').value = unit.head || '';
+                title.textContent = 'Edit Unit';
+            }
+        } else {
+            title.textContent = 'Add Unit';
+        }
+
+        modal.style.display = 'block';
+        document.getElementById('unitModalOverlay').classList.add('open');
+    },
+
+    closeUnitModal: () => {
+        document.getElementById('unitModal').style.display = 'none';
+        document.getElementById('unitModalOverlay').classList.remove('open');
+        UI._editingUnitId = null;
+    },
+
+    saveUnit: (e) => {
+        e.preventDefault();
+        const name = document.getElementById('unitName')?.value?.trim();
+        const description = document.getElementById('unitDescription')?.value?.trim();
+        const color = document.getElementById('unitColor')?.value;
+        const head = document.getElementById('unitHead')?.value || null;
+
+        if (!name) {
+            window.Utils.showToast('Validation Error', 'Unit name is required.', 'error');
+            return;
+        }
+
+        const unit = {
+            id: UI._editingUnitId || 'unit_' + Math.random().toString(36).substr(2, 9),
+            name,
+            description,
+            color,
+            head: head || null,
+            technicians: UI._editingUnitId ? (window.DataService.getUnitById(UI._editingUnitId)?.technicians || []) : []
+        };
+
+        window.DataService.saveUnit(unit);
+        const performer = window.AuthService.getCurrentUser();
+        
+        if (UI._editingUnitId) {
+            window.DataService.logAction('update_unit', performer.name, performer.id, name, `Updated unit configuration`);
+            window.Utils.showToast('Saved', 'Unit updated successfully.', 'success');
+        } else {
+            window.DataService.logAction('create_unit', performer.name, performer.id, name, `Created new unit`);
+            window.Utils.showToast('Created', 'Unit created successfully.', 'success');
+        }
+
+        UI.closeUnitModal();
+        UI.renderUnits();
+        UI.populateCategorySelects();
+    },
+
+    editUnit: (unitId) => {
+        UI.openUnitModal(unitId);
+    },
+
+    deleteUnit: (unitId) => {
+        const unit = window.DataService.getUnitById(unitId);
+        if (!unit) return;
+        
+        if (!confirm(`Delete the unit "${unit.name}"?`)) return;
+        
+        window.DataService.deleteUnit(unitId);
+        const performer = window.AuthService.getCurrentUser();
+        window.DataService.logAction('delete_unit', performer.name, performer.id, unit.name, `Deleted unit`);
+        window.Utils.showToast('Deleted', 'Unit removed.', 'success');
+        UI.renderUnits();
     }
+
 };
 
 // Initialize app when DOM is ready
