@@ -338,11 +338,16 @@ const DataService = {
         DemoDB.set('audit_log', log.slice(0, 500));
     },
 
-    // ===== ROLES MANAGEMENT =====
+   // ===== ROLES MANAGEMENT =====
     getRoles: () => DemoDB.get('roles', []),
     saveRole: (role) => {
+        const currentUser = window.AuthService?.getCurrentUser();
         let roles = DataService.getRoles();
         const idx = roles.findIndex(r => r.id === role.id);
+        const isEditingSuperAdmin = idx >= 0 && roles[idx].id === 'role_super_admin';
+        if (isEditingSuperAdmin && currentUser?.role !== 'super-admin') {
+            throw new Error('Only Super Admin can modify the Super Admin role.');
+        }
         if (idx >= 0) {
             roles[idx] = role;
         } else {
@@ -353,6 +358,10 @@ const DataService = {
         return role;
     },
     deleteRole: (roleId) => {
+        const currentUser = window.AuthService?.getCurrentUser();
+        if (roleId === 'role_super_admin' && currentUser?.role !== 'super-admin') {
+            throw new Error('Only Super Admin can delete the Super Admin role.');
+        }
         let roles = DataService.getRoles();
         roles = roles.filter(r => r.id !== roleId);
         DemoDB.set('roles', roles);

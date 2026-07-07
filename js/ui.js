@@ -33,6 +33,9 @@ const UI = {
         });
     },
 
+    isSuperAdmin: () => window.AuthService.getCurrentUser()?.role === 'super-admin',
+    isProtectedRole: (roleId) => roleId === 'role_super_admin',
+
     bindEvents: () => {
         // Auth Forms
         const loginForm = document.getElementById('loginForm');
@@ -2710,25 +2713,33 @@ const UI = {
         tbody.innerHTML = roles.map(role => {
             const perms = (role.permissions || []).slice(0, 3).join(', ');
             const showMore = role.permissions?.length > 3 ? ` +${role.permissions.length - 3} more` : '';
+            const locked = UI.isProtectedRole(role.id) && !UI.isSuperAdmin();
+            const actions = locked
+                ? `<span class="text-muted text-sm">Protected</span>`
+                : `
+                    <button class="btn btn-icon btn-sm" onclick="UI.editRole('${role.id}')" title="Edit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    ${role.id.startsWith('role_') ? `<button class="btn btn-icon btn-sm" onclick="UI.deleteRole('${role.id}')" title="Delete">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    </button>` : ''}
+                `;
             return `
                 <tr>
                     <td><strong>${role.name}</strong></td>
                     <td><span style="color:var(--text-dim);">${role.description || '—'}</span></td>
                     <td><span style="font-size:0.8rem; color:var(--text-muted);">${perms}${showMore}</span></td>
-                    <td style="text-align:right;">
-                        <button class="btn btn-icon btn-sm" onclick="UI.editRole('${role.id}')" title="Edit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        ${role.id.startsWith('role_') ? `<button class="btn btn-icon btn-sm" onclick="UI.deleteRole('${role.id}')" title="Delete">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                        </button>` : ''}
-                    </td>
+                    <td style="text-align:right;">${actions}</td>
                 </tr>
             `;
         }).join('');
     },
 
     openRoleModal: (roleId = null) => {
+        if (roleId && UI.isProtectedRole(roleId) && !UI.isSuperAdmin()) {
+            window.Utils.showToast('Access Denied', 'Only Super Admin can modify the Super Admin role.', 'error');
+            return;
+        }
         document.getElementById('roleForm').reset();
         const modal = document.getElementById('roleModal');
         const title = document.getElementById('roleModalTitle');
@@ -2763,6 +2774,11 @@ const UI = {
 
     saveRole: (e) => {
         e.preventDefault();
+        if (UI._editingRoleId && UI.isProtectedRole(UI._editingRoleId) && !UI.isSuperAdmin()) {
+            window.Utils.showToast('Access Denied', 'Only Super Admin can modify the Super Admin role.', 'error');
+            UI.closeRoleModal();
+            return;
+        }
         const name = document.getElementById('roleName')?.value?.trim();
         const description = document.getElementById('roleDescription')?.value?.trim();
         const permissions = Array.from(document.querySelectorAll('.rolePermission:checked')).map(cb => cb.value);
@@ -2779,7 +2795,13 @@ const UI = {
             permissions
         };
 
-        window.DataService.saveRole(role);
+        try {
+            window.DataService.saveRole(role);
+        } catch (err) {
+            window.Utils.showToast('Access Denied', err.message, 'error');
+            UI.closeRoleModal();
+            return;
+        }
         const performer = window.AuthService.getCurrentUser();
         
         if (UI._editingRoleId) {
@@ -2799,12 +2821,21 @@ const UI = {
     },
 
     deleteRole: (roleId) => {
+        if (UI.isProtectedRole(roleId) && !UI.isSuperAdmin()) {
+            window.Utils.showToast('Access Denied', 'Only Super Admin can delete the Super Admin role.', 'error');
+            return;
+        }
         const role = window.DataService.getRoleById(roleId);
         if (!role) return;
         
         if (!confirm(`Delete the role "${role.name}"?`)) return;
         
-        window.DataService.deleteRole(roleId);
+        try {
+            window.DataService.deleteRole(roleId);
+        } catch (err) {
+            window.Utils.showToast('Access Denied', err.message, 'error');
+            return;
+        }
         const performer = window.AuthService.getCurrentUser();
         window.DataService.logAction('delete_role', performer.name, performer.id, role.name, `Deleted role`);
         window.Utils.showToast('Deleted', 'Role removed.', 'success');
