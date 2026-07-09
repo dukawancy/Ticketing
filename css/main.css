@@ -2232,3 +2232,464 @@ textarea.form-control { resize: vertical; min-height: 100px; }
 .stat-card-link:active {
   transform: translateY(0);
 }
+
+/* =========================================
+   UI REFINEMENTS v2.1 — Premium Upgrade
+   ========================================= */
+
+/* === ENHANCED COLOR TOKENS === */
+:root {
+  --accent-rgb: 59,130,246;
+  --accent2-rgb: 99,102,241;
+  --sidebar-width: 248px;
+  --topbar-height: 60px;
+
+  /* Richer surfaces */
+  --surface:   #0B1019;
+  --surface2:  #131A27;
+  --surface3:  #1A2234;
+  --surface4:  #202C42;
+
+  /* Sharper borders */
+  --border:        rgba(255,255,255,0.06);
+  --border-md:     rgba(255,255,255,0.11);
+  --border-bright: rgba(255,255,255,0.2);
+
+  /* Richer accent */
+  --accent:       #4F8EF7;
+  --accent-hover: #3B7CF0;
+  --accent-glow:  rgba(79,142,247,0.22);
+
+  /* Better shadows */
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.6);
+  --shadow:    0 8px 40px rgba(0,0,0,0.65);
+  --shadow-xl: 0 32px 80px rgba(0,0,0,0.85);
+
+  --radius:    14px;
+  --radius-lg: 20px;
+}
+
+/* === AUTH PAGE — PREMIUM REDESIGN === */
+.auth-page {
+  background: radial-gradient(ellipse 120% 80% at 60% 0%, rgba(59,130,246,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse 80% 60% at 0% 100%, rgba(99,102,241,0.07) 0%, transparent 55%),
+              #060A14;
+}
+
+.auth-page::before {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 65%);
+  top: -180px; left: -160px;
+}
+.auth-page::after {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 65%);
+  bottom: -120px; right: -120px;
+}
+
+/* Animated grid behind auth */
+.auth-page::before {
+  animation: blobDrift 14s ease-in-out infinite alternate;
+}
+
+.auth-card {
+  background: linear-gradient(145deg, rgba(19,26,39,0.97), rgba(11,16,25,0.98));
+  border: 1px solid rgba(79,142,247,0.14);
+  border-radius: 22px;
+  padding: 2.75rem 2.5rem;
+  max-width: 468px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04),
+              0 40px 100px rgba(0,0,0,0.8),
+              0 0 60px rgba(59,130,246,0.06);
+}
+
+/* Top shimmer line */
+.auth-card::before {
+  background: linear-gradient(90deg, transparent 5%, rgba(79,142,247,0.8) 40%, rgba(99,102,241,0.8) 60%, transparent 95%);
+}
+
+/* Bottom soft glow */
+.auth-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79,142,247,0.3), transparent);
+}
+
+/* Auth logo area */
+.auth-logo {
+  margin-bottom: 2.25rem;
+}
+
+.auth-logo-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(79,142,247,0.2), 0 8px 28px rgba(59,130,246,0.35);
+}
+
+.auth-logo-text h1 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #F0F6FC, #A8C4F4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-logo-text p { font-size: 0.72rem; letter-spacing: 0.03em; }
+
+.auth-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin-bottom: 0.35rem;
+  background: linear-gradient(160deg, #F0F6FC 60%, #8BA8D4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-subtitle {
+  font-size: 0.86rem;
+  color: #6A7A96;
+  margin-bottom: 2rem;
+}
+
+/* Form labels — title-case, less harsh */
+.form-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #8BA4C8;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.45rem;
+}
+
+/* Inputs — richer feel */
+.form-control {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  color: #E8F0FE;
+  transition: all 0.2s ease;
+}
+.form-control:focus {
+  background: rgba(79,142,247,0.06);
+  border-color: rgba(79,142,247,0.5);
+  box-shadow: 0 0 0 3px rgba(79,142,247,0.1), 0 2px 8px rgba(0,0,0,0.3);
+}
+.form-control::placeholder { color: #3D4E68; }
+
+/* Primary button — richer gradient */
+.btn-primary {
+  background: linear-gradient(135deg, #4F8EF7 0%, #2B5FD9 60%, #5B3FC8 100%);
+  box-shadow: 0 4px 20px rgba(79,130,246,0.4), 0 1px 4px rgba(0,0,0,0.4);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 0.75rem 1.25rem;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5B9AF9 0%, #3670E8 60%, #6B4FD8 100%);
+  box-shadow: 0 6px 28px rgba(79,130,246,0.5), 0 1px 4px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+/* Auth divider */
+.auth-divider { margin: 1.5rem 0; }
+.auth-divider::before { background: rgba(255,255,255,0.07); }
+.auth-divider span { background: transparent; color: #3D4E68; }
+
+/* Auth footer links */
+.auth-footer { font-size: 0.85rem; color: #4E6080; }
+.auth-footer a { color: #4F8EF7; font-weight: 600; }
+
+/* Demo credentials box */
+div[style*="var(--surface2)"][style*="Demo"] ,
+.auth-card > div:last-child {
+  background: rgba(255,255,255,0.025) !important;
+  border: 1px solid rgba(79,142,247,0.12) !important;
+  border-radius: 12px !important;
+}
+
+/* === TOPBAR REFINEMENTS === */
+.topbar {
+  background: rgba(6,10,20,0.94);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  height: 60px;
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.topbar-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #F0F6FC, #A8C4F4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.topbar-subtitle { color: #3D5070; font-size: 0.65rem; }
+
+.topbar-logo {
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(79,142,247,0.2), 0 4px 14px rgba(59,130,246,0.3);
+}
+
+/* Notification button */
+.notif-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+}
+.notif-btn:hover {
+  background: rgba(79,142,247,0.08);
+  border-color: rgba(79,142,247,0.25);
+}
+
+/* User chip */
+.user-chip {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 0.3rem 0.75rem 0.3rem 0.35rem;
+  cursor: pointer;
+}
+.user-chip:hover {
+  background: rgba(79,142,247,0.08);
+  border-color: rgba(79,142,247,0.2);
+}
+
+/* Logout */
+.logout-btn {
+  border-color: rgba(255,255,255,0.07);
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+.logout-btn:hover {
+  background: rgba(239,68,68,0.08);
+  border-color: rgba(239,68,68,0.35);
+  color: #FC8585;
+}
+
+/* === SIDEBAR REFINEMENTS === */
+.sidebar {
+  background: rgba(6,10,20,0.97);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+}
+
+.sidebar-item {
+  border-radius: 10px;
+  padding: 0.62rem 0.875rem;
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.sidebar-item:hover {
+  background: rgba(79,142,247,0.07);
+  color: #C8DCFF;
+}
+
+.sidebar-item.active {
+  background: linear-gradient(90deg, rgba(79,142,247,0.15), rgba(79,142,247,0.07));
+  color: #7AB4FF;
+  font-weight: 600;
+}
+
+.sidebar-item.active::before {
+  background: linear-gradient(180deg, #4F8EF7, #6366F1);
+  box-shadow: 0 0 12px rgba(79,142,247,0.5);
+  width: 3px;
+}
+
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  color: #2E3F58;
+}
+
+/* === CARDS === */
+.card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  border-color: rgba(255,255,255,0.09);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+/* === STAT CARDS === */
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+}
+.stat-card::after { opacity: 0.06; }
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.6); }
+
+.stat-value {
+  font-size: 2.4rem;
+  letter-spacing: -0.04em;
+  background: linear-gradient(160deg, #F0F6FC, #8BA8D4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* === TICKET LIST ITEMS === */
+.ticket-item {
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.18s ease;
+}
+.ticket-item:hover {
+  border-color: rgba(79,142,247,0.2);
+  background: rgba(13,26,43,0.9);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transform: translateX(2px);
+}
+
+/* === FILTER BUTTONS === */
+.filter-btn {
+  border-radius: 8px;
+  font-size: 0.79rem;
+  font-weight: 500;
+  border-color: rgba(255,255,255,0.07);
+  transition: all 0.16s ease;
+}
+.filter-btn:hover {
+  background: rgba(79,142,247,0.08);
+  border-color: rgba(79,142,247,0.22);
+  color: #A8C4FF;
+}
+.filter-btn.active {
+  background: linear-gradient(135deg, rgba(79,142,247,0.25), rgba(99,102,241,0.2));
+  border-color: rgba(79,142,247,0.4);
+  color: #7AB4FF;
+  box-shadow: 0 2px 12px rgba(79,142,247,0.2);
+}
+
+/* === BUTTONS — REFINED === */
+.btn {
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.btn-ghost {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.08);
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.14);
+}
+.btn-outline {
+  border-color: rgba(79,142,247,0.3);
+  color: #7AB4FF;
+}
+.btn-outline:hover {
+  background: rgba(79,142,247,0.1);
+  border-color: rgba(79,142,247,0.5);
+}
+
+/* === GLOBAL SEARCH === */
+.global-search-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 9999px;
+  color: #E8F0FE;
+  padding: 0.45rem 1rem 0.45rem 2.25rem;
+}
+.global-search-input:focus {
+  background: rgba(79,142,247,0.07);
+  border-color: rgba(79,142,247,0.4);
+  box-shadow: 0 0 0 3px rgba(79,142,247,0.1);
+}
+
+/* === MODAL REFINEMENTS === */
+.modal {
+  background: #0D1420;
+  border: 1px solid rgba(79,142,247,0.15);
+  border-radius: 20px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9),
+              0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* === PAGE ENTRY ANIMATION === */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(10px) scale(0.995); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.page.active { animation: pageEnter 0.28s cubic-bezier(0.16,1,0.3,1); }
+
+/* === TOAST REFINEMENTS === */
+.toast {
+  background: rgba(19,26,39,0.98);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* === DASHBOARD GREETING === */
+.dash-greeting {
+  background: linear-gradient(135deg, rgba(13,20,32,0.9), rgba(10,17,30,0.95));
+  border: 1px solid rgba(79,142,247,0.12);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+.dash-greeting::before {
+  background: linear-gradient(90deg, #4F8EF7, #6366F1, #8B5CF6);
+  height: 2px;
+}
+
+/* === BADGES REFINEMENTS === */
+.badge { letter-spacing: 0.04em; }
+.badge-open { border-color: rgba(245,158,11,0.2); }
+.badge-in-progress { border-color: rgba(6,182,212,0.2); }
+.badge-resolved { border-color: rgba(34,197,94,0.2); }
+
+/* === COMMENT BODY === */
+.comment-body {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.06);
+  border-radius: 4px 14px 14px 14px;
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(79,142,247,0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(79,142,247,0.35); }
+
+/* === FOCUS RING === */
+.btn:focus-visible,
+.form-control:focus-visible,
+.nav-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2.5px rgba(79,142,247,0.5);
+}
+
+/* === EMPTY STATE === */
+.empty-state {
+  padding: 5rem 2rem;
+}
+
+/* === PENDING SCREEN === */
+.pending-screen {
+  background: rgba(13,20,32,0.5);
+  border-radius: 16px;
+}
+

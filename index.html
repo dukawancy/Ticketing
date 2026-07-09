@@ -40,8 +40,11 @@
                         <label class="form-label">University Email</label>
                         <input type="email" id="loginEmail" class="form-control" placeholder="name@unijos.edu.ng" required>
                     </div>
-                    <div class="form-group mb-2">
-                        <label class="form-label">Password</label>
+                    <div class="form-group">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.45rem;">
+                            <label class="form-label" style="margin-bottom:0;">Password</label>
+                            <a id="forgotPwBtn" style="font-size:0.76rem; color:#4F8EF7; font-weight:500; cursor:pointer; text-decoration:none; opacity:0.85; transition:opacity 0.15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85" onclick="UI.showForgotPasswordModal ? UI.showForgotPasswordModal() : UI.showToast('info','Reset Password','Please contact ict@unijos.edu.ng to reset your password.')">Forgot password?</a>
+                        </div>
                         <div class="pw-input-wrap">
                             <input type="password" id="loginPass" class="form-control" placeholder="••••••••" required>
                             <button type="button" class="pw-toggle-btn" onclick="UI.togglePwVisibility('loginPass', this)" aria-label="Toggle password visibility" tabindex="-1">
@@ -50,30 +53,17 @@
                             </button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-full" style="justify-content:center; padding:0.75rem;">Sign In</button>
+                    <button type="submit" class="btn btn-primary w-full" style="justify-content:center; padding:0.8rem; margin-top:0.5rem;">Sign In</button>
                 </form>
 
                 <div class="auth-divider"><span>or</span></div>
                 <div class="auth-footer">
-                    New user? <a onclick="UI.showAuthPage('register-view')">Create an account</a>
+                    New staff or student? <a onclick="UI.showAuthPage('register-view')">Create an account</a>
                 </div>
-                <div class="auth-footer">
-                    Not a student? <a onclick="UI.showAuthPage('guest-enquiry-view')">Submit an enquiry</a>
+                <div class="auth-footer" style="margin-top:0.6rem;">
+                    Not a university member? <a onclick="UI.showAuthPage('guest-enquiry-view')">Submit a guest enquiry</a>
                 </div>
 
-                <!-- Demo credentials -->
-                <div style="margin-top:1.75rem; padding:1rem 1.1rem; background:var(--surface2); border:1px solid var(--border-md); border-radius:var(--radius-sm); font-size:0.75rem; color:var(--text-muted); line-height:1.8;">
-                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem; font-weight:700; color:var(--text); font-size:0.78rem; font-family:var(--font-head);">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-                        Demo Credentials
-                    </div>
-                    <div style="display:grid; gap:0.3rem; font-family:var(--font-mono); font-size:0.72rem;">
-                        <div><span style="color:var(--accent);">Student   :</span> amina@unijos.edu.ng / pass123</div>
-                        <div><span style="color:var(--warning);">Tech      :</span> musa@unijos.edu.ng / ICT@2026</div>
-                        <div><span style="color:var(--info);">Unit Head :</span> fatima@unijos.edu.ng / ICT@2026</div>
-                        <div><span style="color:var(--danger);">Admin     :</span> admin@unijos.edu.ng / admin123</div>
-                    </div>
-                </div>
             </div>
         </div>
 
