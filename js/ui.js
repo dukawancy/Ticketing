@@ -2640,6 +2640,52 @@ const UI = {
          UI.closeChangePwModal();
     },
 
+    // --- FORGOT PASSWORD MODAL ---
+    openForgotPasswordModal: () => {
+         const modal = document.getElementById('forgotPwModal');
+         const overlay = document.getElementById('forgotPwOverlay');
+         if (!modal) return;
+         modal.style.display = 'block';
+         overlay.classList.add('open');
+         document.getElementById('forgotPwForm').reset();
+         setTimeout(() => {
+             const emailInput = document.getElementById('forgotPwEmail');
+             if (emailInput) emailInput.focus();
+         }, 100);
+    },
+
+    closeForgotPasswordModal: () => {
+         document.getElementById('forgotPwModal').style.display = 'none';
+         document.getElementById('forgotPwOverlay').classList.remove('open');
+    },
+
+    handleForgotPasswordSubmit: (e) => {
+         e.preventDefault();
+         const email = document.getElementById('forgotPwEmail').value;
+         if (!email) return;
+         
+         const btn = document.getElementById('forgotPwSubmitBtn');
+         if (btn) {
+             btn.disabled = true;
+             btn.style.opacity = '0.7';
+             btn.innerHTML = `<svg style="margin-right: 0.5rem;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>Sending...`;
+         }
+
+         window.AuthService.resetPassword(email).then(() => {
+              window.Utils.showToast('Success', 'If this email is registered, a reset link will be sent.', 'success');
+              UI.closeForgotPasswordModal();
+         }).catch(err => {
+              window.Utils.showToast('Info', err.message, 'info');
+              UI.closeForgotPasswordModal();
+         }).finally(() => {
+              if (btn) {
+                  btn.disabled = false;
+                  btn.style.opacity = '1';
+                  btn.textContent = 'Send Reset Link';
+              }
+         });
+    },
+
     // --- ACCOUNT SETTINGS MODAL ---
     openAccountModal: () => {
          const user = window.AuthService.getCurrentUser();

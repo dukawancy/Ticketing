@@ -103,6 +103,16 @@ const AuthService = {
                 resolve(newUser);
             }, 300);
         });
+    },
+    
+    resetPassword: (email) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // In a real app we'd interact with a backend here.
+                // We resolve regardless to prevent email enumeration attacks.
+                resolve();
+            }, 600);
+        });
     }
 };
 
