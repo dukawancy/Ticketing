@@ -379,10 +379,16 @@
                         <h2 id="dashGreetingText">Good morning</h2>
                         <p id="dashGreetingSubtext">Here's what's happening with your tickets today.</p>
                     </div>
-                    <button class="btn btn-primary btn-sm" onclick="UI.navigateTo('newticket-page')">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        New Ticket
-                    </button>
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <button class="btn btn-ghost btn-sm" onclick="alert('Knowledge Base / FAQ coming soon!')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            FAQ
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="UI.navigateTo('newticket-page')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            New Ticket
+                        </button>
+                    </div>
                 </div>
 
                 <div id="dashAlerts"></div>
@@ -394,6 +400,7 @@
                         </div>
                         <div class="stat-value" id="dashOpenCount">0</div>
                         <div class="stat-label">Open Tickets</div>
+                        <div style="height:20px; margin-top:0.75rem; opacity:0.4; color:var(--warning);"><svg width="100%" height="100%" preserveAspectRatio="none"><path d="M0,15 L20,10 L40,18 L60,8 L80,12 L100,2" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
                     </div>
                     <div class="stat-card in-progress stat-card-link" onclick="UI.dashStatClick('in-progress')" title="View in-progress tickets" style="cursor:pointer;">
                         <div class="stat-icon">
@@ -401,6 +408,7 @@
                         </div>
                         <div class="stat-value" id="dashInprogCount">0</div>
                         <div class="stat-label">In Progress</div>
+                        <div style="height:20px; margin-top:0.75rem; opacity:0.4; color:var(--info);"><svg width="100%" height="100%" preserveAspectRatio="none"><path d="M0,5 L20,15 L40,8 L60,18 L80,10 L100,15" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
                     </div>
                     <div class="stat-card resolved stat-card-link" onclick="UI.dashStatClick('resolved')" title="View resolved tickets" style="cursor:pointer;">
                         <div class="stat-icon">
@@ -408,6 +416,7 @@
                         </div>
                         <div class="stat-value" id="dashResCount">0</div>
                         <div class="stat-label">Resolved</div>
+                        <div style="height:20px; margin-top:0.75rem; opacity:0.4; color:var(--success);"><svg width="100%" height="100%" preserveAspectRatio="none"><path d="M0,20 L20,18 L40,10 L60,12 L80,4 L100,0" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
                     </div>
                     <div class="stat-card total stat-card-link" onclick="UI.dashStatClick('all')" title="View all tickets" style="cursor:pointer;">
                         <div class="stat-icon">
@@ -415,6 +424,7 @@
                         </div>
                         <div class="stat-value" id="dashTotalCount">0</div>
                         <div class="stat-label">Total Volume</div>
+                        <div style="height:20px; margin-top:0.75rem; opacity:0.4; color:var(--accent);"><svg width="100%" height="100%" preserveAspectRatio="none"><path d="M0,18 L20,12 L40,15 L60,8 L80,10 L100,5" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
                     </div>
                 </div>
 
@@ -1524,40 +1534,29 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Permissions <span style="color:var(--text-dim); font-weight:400">(select applicable)</span></label>
-                <div style="display:grid; gap:0.5rem;">
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="submit_ticket" class="rolePermission"> Can Submit Tickets
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="view_own_tickets" class="rolePermission"> View Own Tickets
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="view_all_tickets" class="rolePermission"> View All Tickets
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="assign_ticket" class="rolePermission"> Assign Tickets
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="update_ticket" class="rolePermission"> Update Tickets
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="add_internal_notes" class="rolePermission"> Add Internal Notes
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="manage_technicians" class="rolePermission"> Manage Technicians
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="manage_users" class="rolePermission"> Manage Users
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="manage_config" class="rolePermission"> Manage Configuration
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="view_audit" class="rolePermission"> View Audit Log
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.5rem; border-radius:var(--radius); hover:background:var(--surface2);">
-                        <input type="checkbox" name="permission" value="view_metrics" class="rolePermission"> View Metrics
-                    </label>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <h4 style="margin-bottom:0.75rem; font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid var(--border-sm); padding-bottom:0.25rem;">Tickets & Users</h4>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="submit_ticket" class="rolePermission"> Submit Tickets</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="view_own_tickets" class="rolePermission"> View Own Tickets</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="view_all_tickets" class="rolePermission"> View All Tickets</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="view_unit_tickets" class="rolePermission"> View Unit Tickets</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="assign_ticket" class="rolePermission"> Assign Tickets</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="update_ticket" class="rolePermission"> Update Tickets</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="add_internal_notes" class="rolePermission"> Add Internal Notes</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="manage_routing" class="rolePermission"> Manage Routing</label>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom:0.75rem; font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid var(--border-sm); padding-bottom:0.25rem;">Admin & Config</h4>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="manage_technicians" class="rolePermission"> Manage Technicians</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="manage_users" class="rolePermission"> Manage Users</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="manage_config" class="rolePermission"> Manage Configuration</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="manage_roles" class="rolePermission"> Manage Roles</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="manage_units" class="rolePermission"> Manage Units</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="view_audit" class="rolePermission"> View Audit Log</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="view_metrics" class="rolePermission"> View Metrics</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.4rem; border-radius:var(--radius);"><input type="checkbox" name="permission" value="all" class="rolePermission"> Full Access (All)</label>
+                    </div>
                 </div>
             </div>
             <div class="d-flex" style="justify-content:flex-end; gap:1rem; margin-top:1.5rem;">

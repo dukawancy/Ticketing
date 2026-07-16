@@ -1,0 +1,31 @@
+/* === ENHANCED COLOR TOKENS === */
+:root {
+  --accent-rgb: 59,130,246;
+  --accent2-rgb: 99,102,241;
+  --sidebar-width: 248px;
+  --topbar-height: 60px;
+
+  /* Richer surfaces */
+  --surface:   #0B1019;
+  --surface2:  #131A27;
+  --surface3:  #1A2234;
+  --surface4:  #202C42;
+
+  /* Sharper borders */
+  --border:        rgba(255,255,255,0.06);
+  --border-md:     rgba(255,255,255,0.11);
+  --border-bright: rgba(255,255,255,0.2);
+
+  /* Richer accent */
+  --accent:       #4F8EF7;
+  --accent-hover: #3B7CF0;
+  --accent-glow:  rgba(79,142,247,0.22);
+
+  /* Better shadows */
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.6);
+  --shadow:    0 8px 40px rgba(0,0,0,0.65);
+  --shadow-xl: 0 32px 80px rgba(0,0,0,0.85);
+
+  --radius:    14px;
+  --radius-lg: 20px;
+}

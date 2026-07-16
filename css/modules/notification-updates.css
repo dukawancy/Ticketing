@@ -1,0 +1,33 @@
+/* === NOTIFICATION UPDATES === */
+.notif-icon-svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.notif-item:hover .notif-icon-svg { color: var(--accent); }
+
+.notif-dismiss-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.notif-item:hover .notif-dismiss-btn { opacity: 1; }
+.notif-dismiss-btn:hover { background: var(--surface-3); color: var(--text); }

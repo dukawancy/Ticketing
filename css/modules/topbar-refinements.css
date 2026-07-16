@@ -1,0 +1,60 @@
+/* === TOPBAR REFINEMENTS === */
+.topbar {
+  background: rgba(6,10,20,0.94);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  height: 60px;
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.topbar-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #F0F6FC, #A8C4F4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.topbar-subtitle { color: #3D5070; font-size: 0.65rem; }
+
+.topbar-logo {
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(79,142,247,0.2), 0 4px 14px rgba(59,130,246,0.3);
+}
+
+/* Notification button */
+.notif-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+}
+.notif-btn:hover {
+  background: rgba(79,142,247,0.08);
+  border-color: rgba(79,142,247,0.25);
+}
+
+/* User chip */
+.user-chip {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 0.3rem 0.75rem 0.3rem 0.35rem;
+  cursor: pointer;
+}
+.user-chip:hover {
+  background: rgba(79,142,247,0.08);
+  border-color: rgba(79,142,247,0.2);
+}
+
+/* Logout */
+.logout-btn {
+  border-color: rgba(255,255,255,0.07);
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+.logout-btn:hover {
+  background: rgba(239,68,68,0.08);
+  border-color: rgba(239,68,68,0.35);
+  color: #FC8585;
+}

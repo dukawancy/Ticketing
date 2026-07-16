@@ -245,6 +245,10 @@ const DataService = {
         return user;
     },
     deleteUser: (id) => {
+        const currentUser = window.AuthService?.getCurrentUser();
+        if (currentUser && currentUser.id === id) {
+            throw new Error('You cannot delete your own account.');
+        }
         let users = DataService.getUsers();
         users = users.filter(u => u.id !== id);
         DemoDB.set('users', users);
@@ -344,9 +348,12 @@ const DataService = {
         const currentUser = window.AuthService?.getCurrentUser();
         let roles = DataService.getRoles();
         const idx = roles.findIndex(r => r.id === role.id);
-        const isEditingSuperAdmin = idx >= 0 && roles[idx].id === 'role_super_admin';
-        if (isEditingSuperAdmin && currentUser?.role !== 'super-admin') {
-            throw new Error('Only Super Admin can modify the Super Admin role.');
+        const isProtected = idx >= 0 && (roles[idx].id === 'role_super_admin' || roles[idx].id === 'role_admin');
+        if (isProtected && currentUser?.role !== 'super-admin') {
+            if (currentUser) {
+                DataService.logAction('SECURITY_WARNING', currentUser.name, currentUser.id, roles[idx].name, 'Unauthorized attempt to modify protected role');
+            }
+            throw new Error('Only Super Admin can modify protected roles.');
         }
         if (idx >= 0) {
             roles[idx] = role;
@@ -359,8 +366,11 @@ const DataService = {
     },
     deleteRole: (roleId) => {
         const currentUser = window.AuthService?.getCurrentUser();
-        if (roleId === 'role_super_admin' && currentUser?.role !== 'super-admin') {
-            throw new Error('Only Super Admin can delete the Super Admin role.');
+        if ((roleId === 'role_super_admin' || roleId === 'role_admin') && currentUser?.role !== 'super-admin') {
+            if (currentUser) {
+                DataService.logAction('SECURITY_WARNING', currentUser.name, currentUser.id, roleId, 'Unauthorized attempt to delete protected role');
+            }
+            throw new Error('Only Super Admin can delete protected roles.');
         }
         let roles = DataService.getRoles();
         roles = roles.filter(r => r.id !== roleId);

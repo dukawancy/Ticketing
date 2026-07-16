@@ -1,0 +1,7 @@
+/* === TICKET LIST COUNT LINE === */
+.ticket-list-count {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 0.35rem 0 0.5rem;
+  letter-spacing: 0.01em;
+}

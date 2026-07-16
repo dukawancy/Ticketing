@@ -1,0 +1,146 @@
+/* === AUTH PAGE — PREMIUM REDESIGN === */
+.auth-page {
+  background: radial-gradient(ellipse 120% 80% at 60% 0%, rgba(59,130,246,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse 80% 60% at 0% 100%, rgba(99,102,241,0.07) 0%, transparent 55%),
+              #060A14;
+}
+
+.auth-page::before {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 65%);
+  top: -180px; left: -160px;
+}
+.auth-page::after {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 65%);
+  bottom: -120px; right: -120px;
+}
+
+/* Animated grid behind auth */
+.auth-page::before {
+  animation: blobDrift 14s ease-in-out infinite alternate;
+}
+
+.auth-card {
+  background: linear-gradient(145deg, rgba(19,26,39,0.97), rgba(11,16,25,0.98));
+  border: 1px solid rgba(79,142,247,0.14);
+  border-radius: 22px;
+  padding: 2.75rem 2.5rem;
+  max-width: 468px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04),
+              0 40px 100px rgba(0,0,0,0.8),
+              0 0 60px rgba(59,130,246,0.06);
+}
+
+/* Top shimmer line */
+.auth-card::before {
+  background: linear-gradient(90deg, transparent 5%, rgba(79,142,247,0.8) 40%, rgba(99,102,241,0.8) 60%, transparent 95%);
+}
+
+/* Bottom soft glow */
+.auth-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79,142,247,0.3), transparent);
+}
+
+/* Auth logo area */
+.auth-logo {
+  margin-bottom: 2.25rem;
+}
+
+.auth-logo-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(79,142,247,0.2), 0 8px 28px rgba(59,130,246,0.35);
+}
+
+.auth-logo-text h1 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #F0F6FC, #A8C4F4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-logo-text p { font-size: 0.72rem; letter-spacing: 0.03em; }
+
+.auth-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin-bottom: 0.35rem;
+  background: linear-gradient(160deg, #F0F6FC 60%, #8BA8D4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-subtitle {
+  font-size: 0.86rem;
+  color: #6A7A96;
+  margin-bottom: 2rem;
+}
+
+/* Form labels — title-case, less harsh */
+.form-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #8BA4C8;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.45rem;
+}
+
+/* Inputs — richer feel */
+.form-control {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  color: #E8F0FE;
+  transition: all 0.2s ease;
+}
+.form-control:focus {
+  background: rgba(79,142,247,0.06);
+  border-color: rgba(79,142,247,0.5);
+  box-shadow: 0 0 0 3px rgba(79,142,247,0.1), 0 2px 8px rgba(0,0,0,0.3);
+}
+.form-control::placeholder { color: #3D4E68; }
+
+/* Primary button — richer gradient */
+.btn-primary {
+  background: linear-gradient(135deg, #4F8EF7 0%, #2B5FD9 60%, #5B3FC8 100%);
+  box-shadow: 0 4px 20px rgba(79,130,246,0.4), 0 1px 4px rgba(0,0,0,0.4);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 0.75rem 1.25rem;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5B9AF9 0%, #3670E8 60%, #6B4FD8 100%);
+  box-shadow: 0 6px 28px rgba(79,130,246,0.5), 0 1px 4px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+/* Auth divider */
+.auth-divider { margin: 1.5rem 0; }
+.auth-divider::before { background: rgba(255,255,255,0.07); }
+.auth-divider span { background: transparent; color: #3D4E68; }
+
+/* Auth footer links */
+.auth-footer { font-size: 0.85rem; color: #4E6080; }
+.auth-footer a { color: #4F8EF7; font-weight: 600; }
+
+/* Demo credentials box */
+div[style*="var(--surface2)"][style*="Demo"] ,
+.auth-card > div:last-child {
+  background: rgba(255,255,255,0.025) !important;
+  border: 1px solid rgba(79,142,247,0.12) !important;
+  border-radius: 12px !important;
+}

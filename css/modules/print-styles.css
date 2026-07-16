@@ -1,0 +1,42 @@
+/* === PRINT STYLES === */
+@media print {
+  /* hide everything except the ticket detail */
+  .sidebar,
+  .topbar,
+  .sidebar-overlay,
+  .print-hide,
+  .detail-actions-row,
+  #detailRelated,
+  .comment-form,
+  .page:not(#ticket-detail-page),
+  .auth-wrap {
+    display: none !important;
+  }
+
+  body, .main-content, #ticket-detail-page {
+    background: #fff !important;
+    color: #000 !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  #ticket-detail-page {
+    display: block !important;
+    padding: 1.5rem;
+  }
+
+  .card {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    page-break-inside: avoid;
+  }
+
+  .badge {
+    border: 1px solid #ccc !important;
+    color: #000 !important;
+    background: #f5f5f5 !important;
+  }
+
+  a { color: #000 !important; text-decoration: none; }
+}

@@ -1,0 +1,35 @@
+/* === MODAL === */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--transition);
+  backdrop-filter: blur(6px);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  width: 100%; max-width: 520px; max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  transform: scale(0.95) translateY(-10px);
+  transition: transform 0.28s var(--spring);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-title { font-size: 1.1rem; font-weight: 700; font-family: var(--font-head); letter-spacing: -0.02em; }
+
+/* Add Staff Modal (inline style used by existing JS; give it class-like defaults) */
+#addStaffModal {
+  background: var(--surface);
+  border-radius: var(--radius-lg) !important;
+  border-color: var(--border-md) !important;
+}

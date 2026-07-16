@@ -1,0 +1,34 @@
+/* === DASHBOARD GREETING === */
+.dash-greeting {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.35rem 1.75rem;
+  margin-bottom: 1.75rem;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 1rem;
+  position: relative; overflow: hidden;
+}
+
+.dash-greeting::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+}
+
+.dash-greeting-text h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.2rem; }
+.dash-greeting-text p  { font-size: 0.84rem; color: var(--text-muted); margin: 0; }
+
+
+/* === DASHBOARD GREETING === */
+.dash-greeting {
+  background: linear-gradient(135deg, rgba(13,20,32,0.9), rgba(10,17,30,0.95));
+  border: 1px solid rgba(79,142,247,0.12);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+.dash-greeting::before {
+  background: linear-gradient(90deg, #4F8EF7, #6366F1, #8B5CF6);
+  height: 2px;
+}

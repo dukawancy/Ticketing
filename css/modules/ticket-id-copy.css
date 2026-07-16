@@ -1,0 +1,9 @@
+/* === TICKET ID COPY === */
+.ticket-id-copy {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--accent);
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.ticket-id-copy:hover { text-decoration: underline; }

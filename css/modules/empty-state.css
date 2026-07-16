@@ -1,0 +1,11 @@
+/* === EMPTY STATE === */
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+.empty-icon { font-size: 2.5rem; margin-bottom: 0.875rem; opacity: 0.4; }
+.empty-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; opacity: 0.85; }
+.empty-desc { font-size: 0.875rem; margin-bottom: 1.5rem; }
+
+
+/* === EMPTY STATE === */
+.empty-state {
+  padding: 5rem 2rem;
+}

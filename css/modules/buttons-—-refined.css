@@ -1,0 +1,22 @@
+/* === BUTTONS — REFINED === */
+.btn {
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.btn-ghost {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.08);
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.14);
+}
+.btn-outline {
+  border-color: rgba(79,142,247,0.3);
+  color: #7AB4FF;
+}
+.btn-outline:hover {
+  background: rgba(79,142,247,0.1);
+  border-color: rgba(79,142,247,0.5);
+}

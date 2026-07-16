@@ -1,0 +1,9 @@
+/* === PRIORITY DOT === */
+.priority-dot {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; margin-right: 4px; flex-shrink: 0;
+}
+.priority-dot.low      { background: #4ADE80; }
+.priority-dot.medium   { background: #93C5FD; }
+.priority-dot.high     { background: #FCD34D; }
+.priority-dot.critical { background: var(--danger); box-shadow: 0 0 6px rgba(239,68,68,0.6); }

@@ -8,6 +8,7 @@ const UI = {
         UI.bindEvents();
         UI.populateCategorySelects();
         UI.checkAuth();
+        UI.startSessionTimeout();
 
         // Keyboard shortcuts (only when app is active and no input focused)
         document.addEventListener('keydown', (e) => {
@@ -34,7 +35,30 @@ const UI = {
     },
 
     isSuperAdmin: () => window.AuthService.getCurrentUser()?.role === 'super-admin',
-    isProtectedRole: (roleId) => roleId === 'role_super_admin',
+    isProtectedRole: (roleId) => roleId === 'role_super_admin' || roleId === 'role_admin',
+
+    startSessionTimeout: () => {
+        let timeoutTimer;
+        const resetTimer = () => {
+            clearTimeout(timeoutTimer);
+            const user = window.AuthService?.getCurrentUser();
+            if (user && (user.role === 'admin' || user.role === 'super-admin')) {
+                // 15 minutes = 15 * 60 * 1000 = 900000 ms
+                timeoutTimer = setTimeout(() => {
+                    window.AuthService.logout();
+                    window.Utils.showToast('Session Expired', 'You have been logged out due to inactivity.', 'info');
+                    UI.checkAuth();
+                }, 900000);
+            }
+        };
+
+        // Reset timer on user interactions
+        const events = ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll'];
+        events.forEach(event => document.addEventListener(event, resetTimer, { passive: true }));
+        
+        // Listen for auth changes to start/stop the timer
+        window.addEventListener('auth:change', resetTimer);
+    },
 
     bindEvents: () => {
         // Auth Forms
@@ -2783,7 +2807,7 @@ const UI = {
 
     openRoleModal: (roleId = null) => {
         if (roleId && UI.isProtectedRole(roleId) && !UI.isSuperAdmin()) {
-            window.Utils.showToast('Access Denied', 'Only Super Admin can modify the Super Admin role.', 'error');
+            window.Utils.showToast('Access Denied', 'Only Super Admin can modify protected roles.', 'error');
             return;
         }
         document.getElementById('roleForm').reset();
@@ -2821,7 +2845,7 @@ const UI = {
     saveRole: (e) => {
         e.preventDefault();
         if (UI._editingRoleId && UI.isProtectedRole(UI._editingRoleId) && !UI.isSuperAdmin()) {
-            window.Utils.showToast('Access Denied', 'Only Super Admin can modify the Super Admin role.', 'error');
+            window.Utils.showToast('Access Denied', 'Only Super Admin can modify protected roles.', 'error');
             UI.closeRoleModal();
             return;
         }
@@ -2868,7 +2892,7 @@ const UI = {
 
     deleteRole: (roleId) => {
         if (UI.isProtectedRole(roleId) && !UI.isSuperAdmin()) {
-            window.Utils.showToast('Access Denied', 'Only Super Admin can delete the Super Admin role.', 'error');
+            window.Utils.showToast('Access Denied', 'Only Super Admin can delete protected roles.', 'error');
             return;
         }
         const role = window.DataService.getRoleById(roleId);

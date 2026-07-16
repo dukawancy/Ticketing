@@ -1,0 +1,36 @@
+/* === FILTER SELECTS === */
+.filter-sep {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background: var(--border-md);
+  margin: 0 0.2rem;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--surface2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238B949E' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.55rem center;
+  background-size: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+  padding: 0.3rem 1.75rem 0.3rem 0.65rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  white-space: nowrap;
+}
+.filter-select:hover  { border-color: var(--border-md); }
+.filter-select:focus  { outline: none; border-color: var(--accent); }
+
+@media (max-width: 700px) {
+  .filter-select { font-size: 0.72rem; padding: 0.25rem 1.5rem 0.25rem 0.5rem; }
+  .filter-sep    { display: none; }
+}

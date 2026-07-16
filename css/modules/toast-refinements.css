@@ -1,0 +1,9 @@
+/* === TOAST REFINEMENTS === */
+.toast {
+  background: rgba(19,26,39,0.98);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}

@@ -1,0 +1,19 @@
+/* === FILTER BUTTONS === */
+.filter-btn {
+  border-radius: 8px;
+  font-size: 0.79rem;
+  font-weight: 500;
+  border-color: rgba(255,255,255,0.07);
+  transition: all 0.16s ease;
+}
+.filter-btn:hover {
+  background: rgba(79,142,247,0.08);
+  border-color: rgba(79,142,247,0.22);
+  color: #A8C4FF;
+}
+.filter-btn.active {
+  background: linear-gradient(135deg, rgba(79,142,247,0.25), rgba(99,102,241,0.2));
+  border-color: rgba(79,142,247,0.4);
+  color: #7AB4FF;
+  box-shadow: 0 2px 12px rgba(79,142,247,0.2);
+}

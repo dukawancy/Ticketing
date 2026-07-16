@@ -1,0 +1,71 @@
+/* === RESPONSIVE === */
+
+/* Large desktop: sidebar + full content */
+@media (min-width: 1024px) {
+  .hamburger-btn   { display: none; }
+  .topbar-nav      { display: none; }
+  .sidebar         { transform: translateX(0); }
+}
+
+/* Tablet: no sidebar, show topbar nav */
+@media (max-width: 1023px) {
+  .hamburger-btn { display: flex; }
+  .topbar-nav    { display: flex; }
+  .main-content  { margin-left: 0; padding: 1.5rem; }
+
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 150;
+    top: var(--topbar-height);
+  }
+  .sidebar.open { transform: translateX(0); }
+}
+
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .detail-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .topbar { padding: 0 1rem; }
+  .topbar-title { display: none; }
+  .nav-tab { padding: 0.4rem 0.6rem; font-size: 0.78rem; }
+  .notif-panel { width: 100%; }
+  .auth-card { padding: 1.75rem; }
+  .main-content { padding: 1.25rem 1rem; }
+}
+
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
+  .topbar-nav { display: none; }
+
+  .mobile-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(3,7,18,0.97);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom,0px));
+    z-index: 100;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  .mobile-nav-item {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.15rem; font-size: 0.62rem; color: var(--text-muted);
+    padding: 0.4rem 1rem; border-radius: 8px;
+    cursor: pointer; background: none; border: none;
+    font-family: var(--font-body);
+    transition: all var(--transition);
+    min-width: 56px;
+  }
+
+  .mobile-nav-item.active { color: var(--accent); background: rgba(59,130,246,0.1); }
+  .mobile-nav-icon { width: 22px; height: 22px; }
+  .main-content { padding-bottom: 5rem; }
+  .ticket-item { flex-wrap: wrap; }
+  .users-grid { grid-template-columns: 1fr; }
+}

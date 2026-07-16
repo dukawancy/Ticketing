@@ -1,0 +1,123 @@
+/* === CHARTS === */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 220px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.chart-card { min-width: 0; }
+
+.chart-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 0.75rem 0 1rem;
+  flex-wrap: wrap;
+}
+
+.sla-wrap { position: relative; flex-direction: column; gap: 0; }
+
+.sla-pct-overlay {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-top: 0.25rem;
+  letter-spacing: -0.03em;
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.chart-legend-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Top technicians */
+.top-tech-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.top-tech-item:last-child { border-bottom: none; }
+
+.top-tech-rank {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  width: 1.75rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.top-tech-avatar {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--surface3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.875rem; font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+  font-family: var(--font-head);
+}
+
+.top-tech-name { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.1rem; letter-spacing: -0.01em; }
+.top-tech-unit { font-size: 0.7rem; color: var(--text-muted); }
+.flex-1 { flex: 1; min-width: 0; }
+
+.top-tech-count {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+/* Overdue badge on ticket cards */
+.badge-overdue {
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.62rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  animation: pulse 2s infinite;
+}
+
+.sla-time-left {
+  font-size: 0.65rem;
+  color: var(--warning);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .charts-row { grid-template-columns: 1fr 1fr; }
+  .sla-card { grid-column: 1 / -1; flex-direction: row; }
+  .sla-wrap { flex-direction: row; gap: 1rem; }
+}
+
+@media (max-width: 600px) {
+  .charts-row { grid-template-columns: 1fr; }
+  .sla-card { grid-column: auto; }
+}

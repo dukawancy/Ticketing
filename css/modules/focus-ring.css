@@ -1,0 +1,7 @@
+/* === FOCUS RING === */
+.btn:focus-visible,
+.form-control:focus-visible,
+.nav-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2.5px rgba(79,142,247,0.5);
+}

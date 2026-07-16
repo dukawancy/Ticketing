@@ -1,0 +1,48 @@
+/* === DASHBOARD ALERTS === */
+#dashAlerts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.dash-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  border: 1px solid transparent;
+}
+
+.dash-alert svg { flex-shrink: 0; }
+
+.dash-alert span { flex: 1; }
+
+.dash-alert-warning {
+  background: rgba(245,158,11,0.1);
+  border-color: rgba(245,158,11,0.3);
+  color: var(--warning);
+}
+
+.dash-alert-info {
+  background: rgba(56,189,248,0.08);
+  border-color: rgba(56,189,248,0.25);
+  color: var(--info);
+}
+
+.dash-alert .btn-xs {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.dash-alert .btn-xs:hover { opacity: 1; }

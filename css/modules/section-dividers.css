@@ -1,0 +1,11 @@
+/* === SECTION DIVIDERS === */
+.section { margin-bottom: 2rem; }
+.section-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem; font-weight: 700; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 1rem; padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sep { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }

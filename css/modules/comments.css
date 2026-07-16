@@ -1,0 +1,26 @@
+/* === COMMENTS === */
+.comment-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+.comment-item { display: flex; gap: 0.75rem; }
+
+.comment-avatar {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+  font-family: var(--font-head);
+}
+
+.comment-body {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0 var(--radius) var(--radius) var(--radius);
+  padding: 0.75rem 1rem;
+}
+
+.comment-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+.comment-author { font-weight: 700; font-size: 0.82rem; font-family: var(--font-head); letter-spacing: -0.01em; }
+.comment-time { font-size: 0.68rem; color: var(--text-muted); }
+.comment-text { font-size: 0.86rem; line-height: 1.65; white-space: pre-wrap; }
+.comment-internal { border-left: 3px solid var(--warning); background: rgba(245,158,11,0.04); }

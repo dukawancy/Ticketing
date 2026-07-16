@@ -1,0 +1,6 @@
+/* === STALE BADGE === */
+.badge-stale {
+  background: rgba(107,114,128,0.2);
+  color: var(--text-muted);
+  border: 1px solid rgba(107,114,128,0.3);
+}

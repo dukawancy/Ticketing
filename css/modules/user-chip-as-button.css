@@ -1,0 +1,12 @@
+/* === USER CHIP AS BUTTON === */
+.user-chip {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  text-align: left;
+  transition: background 0.15s;
+  border-radius: var(--radius);
+  padding: 0.25rem 0.5rem;
+}
+
+.user-chip:hover { background: var(--surface-3); }
