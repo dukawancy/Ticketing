@@ -1,60 +1,64 @@
 /* === TOPBAR REFINEMENTS === */
 .topbar {
-  background: rgba(6,10,20,0.94);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(10, 16, 28, 0.92);
+  border-bottom: 1px solid var(--border);
   height: 60px;
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.32);
 }
 
 .topbar-title {
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #F0F6FC, #A8C4F4);
+  background: linear-gradient(135deg, #edf4ff, #b3c9ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  letter-spacing: -0.02em;
 }
-.topbar-subtitle { color: #3D5070; font-size: 0.65rem; }
+.topbar-subtitle { color: var(--text-muted); font-size: 0.65rem; }
 
 .topbar-logo {
-  border-radius: 10px;
-  box-shadow: 0 0 0 1px rgba(79,142,247,0.2), 0 4px 14px rgba(59,130,246,0.3);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 1px rgba(79, 142, 247, 0.24), 0 8px 18px rgba(79, 142, 247, 0.24);
 }
 
 /* Notification button */
 .notif-btn {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
 }
 .notif-btn:hover {
-  background: rgba(79,142,247,0.08);
-  border-color: rgba(79,142,247,0.25);
+  background: rgba(79, 142, 247, 0.08);
+  border-color: rgba(79, 142, 247, 0.3);
 }
 
 /* User chip */
 .user-chip {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   padding: 0.3rem 0.75rem 0.3rem 0.35rem;
   cursor: pointer;
+  transition: all var(--transition);
 }
 .user-chip:hover {
-  background: rgba(79,142,247,0.08);
-  border-color: rgba(79,142,247,0.2);
+  background: rgba(79, 142, 247, 0.08);
+  border-color: rgba(79, 142, 247, 0.25);
 }
 
 /* Logout */
 .logout-btn {
-  border-color: rgba(255,255,255,0.07);
-  border-radius: 10px;
+  border-color: var(--border);
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
+  transition: all var(--transition);
 }
 .logout-btn:hover {
-  background: rgba(239,68,68,0.08);
-  border-color: rgba(239,68,68,0.35);
-  color: #FC8585;
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #ff8888;
 }

@@ -3,31 +3,32 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.2rem 0.6rem;
+  padding: 0.25rem 0.7rem;
   border-radius: var(--radius-pill);
-  font-size: 0.67rem;
+  font-size: 0.65rem;
   font-weight: 700;
   font-family: var(--font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   white-space: nowrap;
+  transition: all var(--transition);
 }
 
-.badge-open        { background: rgba(245,158,11,0.12);  color: #FCD34D; border: 1px solid rgba(245,158,11,0.22); }
-.badge-in-progress { background: rgba(6,182,212,0.12);   color: #22D3EE; border: 1px solid rgba(6,182,212,0.22); }
-.badge-resolved    { background: rgba(34,197,94,0.12);   color: #4ADE80; border: 1px solid rgba(34,197,94,0.22); }
-.badge-closed      { background: rgba(148,163,184,0.1);  color: #94A3B8; border: 1px solid rgba(148,163,184,0.18); }
-.badge-escalated   { background: rgba(239,68,68,0.12);   color: #FCA5A5; border: 1px solid rgba(239,68,68,0.22);  box-shadow: 0 0 10px rgba(239,68,68,0.2); }
-.badge-routed      { background: rgba(124,92,252,0.12);  color: #A78BFA; border: 1px solid rgba(124,92,252,0.22); }
-.badge-dispatcher  { background: rgba(124,92,252,0.1);   color: #C4B5FD; border: 1px solid rgba(124,92,252,0.2); }
+.badge-open        { background: rgba(251,191,36,0.14);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+.badge-in-progress { background: rgba(56,189,248,0.14);   color: #38bdf8; border: 1px solid rgba(56,189,248,0.25); }
+.badge-resolved    { background: rgba(34,197,94,0.14);    color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+.badge-closed      { background: rgba(148,163,184,0.12);  color: #94a3b8; border: 1px solid rgba(148,163,184,0.22); }
+.badge-escalated   { background: rgba(239,68,68,0.14);    color: #ff8888; border: 1px solid rgba(239,68,68,0.25); box-shadow: 0 0 12px rgba(239,68,68,0.22); }
+.badge-routed      { background: rgba(168,85,247,0.14);   color: #d8b4fe; border: 1px solid rgba(168,85,247,0.25); }
+.badge-dispatcher  { background: rgba(168,85,247,0.12);   color: #e9d5ff; border: 1px solid rgba(168,85,247,0.22); }
 
-.badge-low      { background: rgba(34,197,94,0.1);   color: #4ADE80; border: 1px solid rgba(34,197,94,0.2); }
-.badge-medium   { background: rgba(59,130,246,0.1);  color: #93C5FD; border: 1px solid rgba(59,130,246,0.2); }
-.badge-high     { background: rgba(245,158,11,0.1);  color: #FCD34D; border: 1px solid rgba(245,158,11,0.2); }
-.badge-critical { background: rgba(239,68,68,0.1);   color: #FCA5A5; border: 1px solid rgba(239,68,68,0.2);  box-shadow: 0 0 8px rgba(239,68,68,0.25); }
+.badge-low      { background: rgba(34,197,94,0.12);    color: #22c55e; border: 1px solid rgba(34,197,94,0.22); }
+.badge-medium   { background: rgba(79,142,247,0.12);   color: #93c5fd; border: 1px solid rgba(79,142,247,0.22); }
+.badge-high     { background: rgba(251,191,36,0.12);   color: #fbbf24; border: 1px solid rgba(251,191,36,0.22); }
+.badge-critical { background: rgba(239,68,68,0.12);    color: #ff8888; border: 1px solid rgba(239,68,68,0.22); box-shadow: 0 0 10px rgba(239,68,68,0.28); }
 
-.badge-student    { background: rgba(59,130,246,0.12);  color: #93C5FD; }
-.badge-staff      { background: rgba(99,102,241,0.12);  color: #A5B4FC; }
-.badge-technician { background: rgba(245,158,11,0.12);  color: #FCD34D; }
-.badge-unit-head  { background: rgba(6,182,212,0.12);   color: #22D3EE; }
-.badge-admin      { background: rgba(239,68,68,0.12);   color: #FCA5A5; }
+.badge-student    { background: rgba(79,142,247,0.12);  color: #93c5fd; }
+.badge-staff      { background: rgba(168,85,247,0.12);  color: #d8b4fe; }
+.badge-technician { background: rgba(251,191,36,0.12);  color: #fbbf24; }
+.badge-unit-head  { background: rgba(56,189,248,0.12);  color: #38bdf8; }
+.badge-admin      { background: rgba(239,68,68,0.12);   color: #ff8888; }

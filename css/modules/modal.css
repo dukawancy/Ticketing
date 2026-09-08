@@ -12,7 +12,9 @@
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 
 .modal {
-  background: var(--surface);
+  background: var(--glass-panel);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-md);
   border-radius: var(--radius-lg);
   padding: 2rem;
@@ -29,7 +31,9 @@
 
 /* Add Staff Modal (inline style used by existing JS; give it class-like defaults) */
 #addStaffModal {
-  background: var(--surface);
+  background: var(--glass-panel);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-radius: var(--radius-lg) !important;
   border-color: var(--border-md) !important;
 }

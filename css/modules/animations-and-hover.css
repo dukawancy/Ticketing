@@ -1,0 +1,54 @@
+/* === ANIMATIONS & INTERACTIVE HOVER STATES === */
+
+/* Dashboard Entrance Staggering */
+@keyframes staggerFadeUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.stat-card {
+  animation: staggerFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+.stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+.chart-card {
+  animation: staggerFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: 0.25s;
+}
+
+.ticket-list > * {
+  animation: staggerFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.ticket-list > *:nth-child(1) { animation-delay: 0.05s; }
+.ticket-list > *:nth-child(2) { animation-delay: 0.1s; }
+.ticket-list > *:nth-child(3) { animation-delay: 0.15s; }
+.ticket-list > *:nth-child(4) { animation-delay: 0.2s; }
+.ticket-list > *:nth-child(5) { animation-delay: 0.25s; }
+.ticket-list > *:nth-child(n+6) { animation-delay: 0.3s; }
+
+/* Interactive Hover States */
+.card, .stat-card, .chart-card, .ticket-list-item, .user-card {
+  transition: transform var(--transition-slow), box-shadow var(--transition-slow), border-color var(--transition);
+}
+
+.card:hover, .stat-card:hover, .chart-card:hover, .user-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-bright);
+}
+
+.ticket-list-item:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+  position: relative;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--accent-glow);
+}

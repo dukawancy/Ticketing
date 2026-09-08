@@ -1,6 +1,6 @@
 /* === TOPBAR === */
 .topbar {
-  background: rgba(3,7,18,0.92);
+  background: var(--glass-panel);
   border-bottom: 1px solid var(--border);
   padding: 0 1.5rem;
   height: var(--topbar-height);
@@ -10,9 +10,10 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   gap: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.32);
 }
 
 .topbar-brand {
@@ -26,13 +27,13 @@
 .topbar-logo {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 9px;
+  background: var(--brand-gradient);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 0 16px rgba(59,130,246,0.4), 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 20px rgba(79, 142, 247, 0.28), 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 .topbar-logo svg { width: 18px; height: 18px; color: #fff; }
 

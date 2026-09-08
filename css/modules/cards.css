@@ -1,10 +1,17 @@
 /* === CARDS === */
 .card {
-  background: var(--surface);
+  background: var(--surface-gradient), var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.5rem;
-  transition: border-color var(--transition);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.card:hover {
+  border-color: var(--border-md);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
 }
 
 .card-header {
@@ -15,17 +22,3 @@
   gap: 1rem;
 }
 .card-header h2,.card-header h3 { margin: 0; }
-
-
-/* === CARDS === */
-.card {
-  background: var(--surface);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--radius);
-  box-shadow: 0 2px 16px rgba(0,0,0,0.4);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.card:hover {
-  border-color: rgba(255,255,255,0.09);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-}

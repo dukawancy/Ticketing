@@ -7,6 +7,8 @@ const UI = {
     init: () => {
         UI.bindEvents();
         UI.populateCategorySelects();
+        UI.populateUnitSelects();
+        UI.initTheme();
         UI.checkAuth();
         UI.startSessionTimeout();
 
@@ -138,6 +140,56 @@ const UI = {
                    ticketCategory.value = previous;
               }
          }
+    },
+
+    populateUnitSelects: () => {
+         const units = window.DataService.getUnits();
+         const unitOptions = units.map(u => `<option value="${window.Utils.escapeHtml(u.name)}">${window.Utils.escapeHtml(u.name)}</option>`).join('');
+
+         const staffUnit = document.getElementById('staffUnit');
+         if (staffUnit) {
+              const previous = staffUnit.value || '';
+              staffUnit.innerHTML = `<option value="">N/A</option>${unitOptions}`;
+              if (previous && units.some(u => u.name === previous)) staffUnit.value = previous;
+         }
+
+         const categoryUnit = document.getElementById('categoryUnit');
+         if (categoryUnit) {
+              const previous = categoryUnit.value || '';
+              categoryUnit.innerHTML = `<option value="">Select unit…</option>${unitOptions}`;
+              if (previous && units.some(u => u.name === previous)) categoryUnit.value = previous;
+         }
+
+         const routeUnit = document.getElementById('routeUnitSelect');
+         if (routeUnit) {
+              const previous = routeUnit.value || '';
+              routeUnit.innerHTML = `<option value="">Select unit…</option>${unitOptions}`;
+              if (previous && units.some(u => u.name === previous)) routeUnit.value = previous;
+         }
+    },
+
+    toggleTheme: () => {
+        const isLight = document.body.classList.toggle('light-mode');
+        localStorage.setItem('ict_theme', isLight ? 'light' : 'dark');
+        const iconDark = document.getElementById('themeIconDark');
+        const iconLight = document.getElementById('themeIconLight');
+        if (iconDark && iconLight) {
+            iconDark.style.display = isLight ? 'block' : 'none';
+            iconLight.style.display = isLight ? 'none' : 'block';
+        }
+    },
+    
+    initTheme: () => {
+        const savedTheme = localStorage.getItem('ict_theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            const iconDark = document.getElementById('themeIconDark');
+            const iconLight = document.getElementById('themeIconLight');
+            if (iconDark && iconLight) {
+                iconDark.style.display = 'block';
+                iconLight.style.display = 'none';
+            }
+        }
     },
 
     checkAuth: () => {
@@ -492,64 +544,29 @@ const UI = {
     },
 
     renderCharts: (tickets) => {
-        const statusList = ['open', 'in-progress', 'resolved', 'closed', 'escalated'];
-        const statusColors = ['#F59E0B', '#06B6D4', '#22C55E', '#6B7280', '#EF4444'];
-        const statusData = statusList.map((s, i) => ({ label: s, value: tickets.filter(t => t.status === s).length }));
-        UI.drawDoughnut('statusChart', statusData, statusColors);
+        const statusData = DashboardCharts.getMockStatusCounts().map((item) => ({
+            ...item,
+            value: typeof item.value === 'number' ? item.value : 0,
+            color: DashboardCharts.getStatusColorMap()[item.label.toLowerCase().replace(/\s+/g, '-')]
+                || DashboardCharts.getStatusColorMap()[item.label.toLowerCase()]
+                || DashboardCharts.getStatusColorMap().open
+        }));
 
-        const legend = document.getElementById('statusLegend');
-        if (legend) {
-            legend.innerHTML = statusData
-                .filter(d => d.value > 0)
-                .map(d => {
-                    const color = statusColors[statusList.indexOf(d.label)];
-                    return `<div class="chart-legend-item">
-                        <span class="chart-legend-dot" style="background:${color}"></span>
-                        <span>${d.label.replace('-', ' ')} (${d.value})</span>
-                    </div>`;
-                }).join('');
+        if (document.getElementById('statusChart')) {
+            DashboardCharts.buildLegend(statusData, 'statusLegend');
+            DashboardCharts.renderStatusDoughnut();
         }
 
-        const priorities = ['low', 'medium', 'high', 'critical'];
-        const priorityColors = ['#4ADE80', '#93C5FD', '#FCD34D', '#EF4444'];
-        const priorityLabels = ['Low', 'Med', 'High', 'Crit'];
-        const priorityData = priorities.map((p, i) => ({ label: priorityLabels[i], value: tickets.filter(t => t.priority === p).length }));
-        UI.drawBars('priorityChart', priorityData, priorityColors);
+        if (document.getElementById('trendChart')) {
+            DashboardCharts.renderTrendLine();
+        }
 
-        const sla = window.Utils.slaCompliancePct(tickets);
-        UI.drawRing('slaChart', sla);
-        const slaPctEl = document.getElementById('slaPct');
-        if (slaPctEl) slaPctEl.textContent = `${sla}%`;
+        if (document.getElementById('slaChart')) {
+            DashboardCharts.renderSlaDoughnut();
+        }
 
-        const allUsers = window.DataService.getUsers();
-        const techStats = allUsers
-            .filter(u => u.role === 'technician')
-            .map(u => ({
-                ...u,
-                resolved: tickets.filter(t => t.assignedId === u.id && (t.status === 'resolved' || t.status === 'closed')).length,
-                total: tickets.filter(t => t.assignedId === u.id).length
-            }))
-            .filter(u => u.total > 0)
-            .sort((a, b) => b.resolved - a.resolved)
-            .slice(0, 5);
-
-        const techList = document.getElementById('topTechList');
-        if (techList) {
-            if (!techStats.length) {
-                techList.innerHTML = '<div style="padding:1rem; color:var(--text-muted); font-size:0.875rem;">No technician data yet.</div>';
-            } else {
-                techList.innerHTML = techStats.map((t, i) => `
-                    <div class="top-tech-item">
-                        <div class="top-tech-rank">#${i + 1}</div>
-                        <div class="top-tech-avatar">${t.name.charAt(0)}</div>
-                        <div class="flex-1">
-                            <div class="top-tech-name">${window.Utils.escapeHtml(t.name)}</div>
-                            <div class="top-tech-unit">${window.Utils.escapeHtml(t.unit || '—')} · ${t.total} assigned</div>
-                        </div>
-                        <div class="top-tech-count">${t.resolved} resolved</div>
-                    </div>
-                `).join('');
-            }
+        if (document.getElementById('topTechList')) {
+            DashboardCharts.renderTopTechnicians();
         }
     },
 
@@ -3023,6 +3040,7 @@ const UI = {
         UI.closeUnitModal();
         UI.renderUnits();
         UI.populateCategorySelects();
+        UI.populateUnitSelects();
     },
 
     editUnit: (unitId) => {
@@ -3040,6 +3058,7 @@ const UI = {
         window.DataService.logAction('delete_unit', performer.name, performer.id, unit.name, `Deleted unit`);
         window.Utils.showToast('Deleted', 'Unit removed.', 'success');
         UI.renderUnits();
+        UI.populateUnitSelects();
     }
 
 };

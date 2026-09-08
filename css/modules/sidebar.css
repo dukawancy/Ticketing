@@ -5,16 +5,17 @@
   left: 0;
   width: var(--sidebar-width);
   height: calc(100vh - var(--topbar-height));
-  background: rgba(3,7,18,0.96);
+  background: var(--glass-panel);
   border-right: 1px solid var(--border);
   z-index: 90;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   transition: transform var(--transition-slow);
+  box-shadow: inset -2px 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-section-label {

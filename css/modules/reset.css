@@ -4,12 +4,13 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
-  background: var(--bg);
+  background: var(--bg-radial);
   color: var(--text);
   min-height: 100vh;
   line-height: 1.65;
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
+  background-attachment: fixed;
 }
 
 @media (prefers-reduced-motion: reduce) {
