@@ -14,20 +14,20 @@
 
 .form-control {
   width: 100%;
-  background: rgba(15, 23, 42, 0.32);
+  background: var(--glass-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 0.8rem 0.95rem;
+  padding: 0.72rem 0.9rem;
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 0.92rem;
+  font-size: var(--type-body);
   transition: border-color var(--transition), box-shadow var(--transition), background var(--transition), transform var(--transition);
   outline: none;
 }
 .form-control:focus {
-  border-color: rgba(79,142,247,0.7);
-  box-shadow: 0 0 0 4px rgba(79,142,247,0.12);
-  background: rgba(17, 25, 39, 0.56);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  background: var(--glass-panel);
 }
 .form-control::placeholder { color: var(--text-dim); }
 .form-control.error { border-color: var(--danger); }

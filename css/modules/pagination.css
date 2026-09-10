@@ -11,18 +11,19 @@
   min-width: 36px;
   height: 36px;
   padding: 0 0.5rem;
-  background: var(--surface-2);
-  border: 1px solid var(--border-sm);
-  border-radius: var(--radius);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-family: var(--font-body);
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: all var(--transition);
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: var(--surface-3);
+  background: var(--surface3);
   color: var(--text);
   border-color: var(--border-md);
 }
@@ -41,6 +42,6 @@
 
 .pagination-info {
   margin-left: auto;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }

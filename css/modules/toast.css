@@ -10,8 +10,8 @@
 .toast {
   background: var(--surface2);
   border: 1px solid var(--border-md);
-  border-radius: var(--radius);
-  padding: 0.875rem 1rem;
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.1rem;
   display: flex; align-items: flex-start; gap: 0.75rem;
   box-shadow: 0 16px 48px rgba(0,0,0,0.6);
   animation: slideInRight 0.3s var(--spring), fadeOut 0.3s ease 2.7s forwards;
@@ -24,5 +24,5 @@
 
 .toast-icon { font-size: 1.1rem; flex-shrink: 0; }
 .toast-body { flex: 1; }
-.toast-title { font-weight: 700; font-size: 0.82rem; margin-bottom: 0.1rem; font-family: var(--font-head); }
-.toast-msg { font-size: 0.75rem; color: var(--text-muted); }
+.toast-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.15rem; font-family: var(--font-head); }
+.toast-msg { font-size: var(--type-small); color: var(--text-muted); line-height: 1.4; }

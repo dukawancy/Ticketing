@@ -39,6 +39,19 @@
   --warning:  #fbbf24;
   --danger:   #ef4444;
   --info:     #38bdf8;
+  /* Standardized status shades for badges and borders */
+  --status-open: var(--warning);
+  --status-in-progress: var(--info);
+  --status-resolved: var(--success);
+  --status-closed: #6b7280;
+  --status-overdue: var(--danger);
+
+  /* Type scale */
+  --type-h1: 1.6rem;
+  --type-h2: 1.25rem;
+  --type-h3: 1.05rem;
+  --type-body: 0.95rem;
+  --type-small: 0.78rem;
 
   /* Glass */
   --glass-bg:     rgba(255,255,255,0.03);

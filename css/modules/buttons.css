@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.7rem 1.2rem;
-  border-radius: var(--radius-sm);
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius);
   border: 1px solid transparent;
   font-family: var(--font-body);
   font-size: 0.875rem;
@@ -18,8 +18,8 @@
   outline: none;
   letter-spacing: -0.01em;
 }
-.btn:active { transform: translateY(0) scale(0.98); }
-.btn:focus-visible { box-shadow: 0 0 0 3px rgba(79,142,247,0.2); }
+.btn:active { transform: translateY(0) scale(0.985); }
+.btn:focus-visible { box-shadow: 0 0 0 3px var(--accent-glow); }
 
 .btn-primary {
   background: var(--brand-gradient);

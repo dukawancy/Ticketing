@@ -5,7 +5,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 0.875rem 1.25rem 0.875rem 1.35rem;
+  padding: 0.9rem 1.2rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -60,17 +60,17 @@
 
 .ticket-item-title {
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--type-body);
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 0.2rem;
-  letter-spacing: -0.01em;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.005em;
 }
 
 .ticket-item-meta {
-  font-size: 0.72rem;
+  font-size: var(--type-small);
   color: var(--text-muted);
   display: flex;
   align-items: center;
